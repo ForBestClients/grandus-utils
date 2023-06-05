@@ -5,20 +5,27 @@ const getStaticBlocks = async props => {
   const req = {};
   const uri = [];
 
+  if (props?.hash) {
+    uri.push('hash=' + encodeURIComponent(props?.hash));
+  }
+
   if (props?.group) {
     uri.push(`group=${encodeURIComponent(props?.group)}`);
   }
 
-  if (props?.expand) {
-    uri.push(`expand=${encodeURIComponent(props?.expand)}`);
-  } else {
-    uri.push(`expand=customCss,customJavascript`);
+  if (props?.fields) {
+    uri.push('fields=' + props?.fields);
   }
 
-  if (props?.perPage) {
-    uri.push(`per-page=${props?.perPage}`);
-  } else {
-    uri.push(`per-page=999`);
+  if (props?.perPage !== false) {
+    uri.push('per-page=' + (props?.perPage ? props?.perPage : '999'));
+  }
+
+  if (props?.expand !== false) {
+    uri.push(
+      'expand=' +
+        (props?.expand ? props?.expand : 'customCss,customJavascript'),
+    );
   }
 
   const staticBlocks = await fetch(
