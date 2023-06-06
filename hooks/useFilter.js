@@ -376,6 +376,7 @@ const useFilter = ({
   parameters = [],
   options = {},
   useDataFromRouter = false,
+  fields = null,
 } = {}) => {
   const router = useRouter();
   let uri = [];
@@ -411,6 +412,10 @@ const useFilter = ({
 
     if (search) {
       uri.push(`search=${search}`);
+    }
+
+    if (fields) {
+      uri.push(`fields=${fields}`);
     }
   }
 
