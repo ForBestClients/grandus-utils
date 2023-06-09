@@ -377,6 +377,7 @@ const useFilter = ({
   options = {},
   useDataFromRouter = false,
   fields = null,
+  allProducts = false,
 } = {}) => {
   const router = useRouter();
   let uri = [];
@@ -419,7 +420,8 @@ const useFilter = ({
     }
   }
 
-  const url = `/api/lib/v1/filters?${uri.join("&")}`;
+  const filterRoute = allProducts ? 'filter/all' : 'filter';
+  const url = `/api/lib/v1/${filterRoute}?${uri.join("&")}`;
 
   const {
     data: filter,
