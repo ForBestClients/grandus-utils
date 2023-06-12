@@ -420,7 +420,7 @@ const useFilter = ({
     }
   }
 
-  const filterRoute = allProducts ? 'filter/all' : 'filter';
+  const filterRoute = allProducts ? 'filters/all' : 'filters';
   const url = `/api/lib/v1/${filterRoute}?${uri.join("&")}`;
 
   const {
