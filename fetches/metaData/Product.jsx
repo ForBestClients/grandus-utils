@@ -10,7 +10,7 @@ const getProductMetadata = async props => {
     product?.shortProductDescription?.description,
     'mobilonline.sk',
     {},
-    // { image: { url: `/api/og/product/image/${product?.urlTitle}` } },
+    { alternates: { canonical: `/produkt/${product?.urlTitle}` } },
   );
 
   return meta;
