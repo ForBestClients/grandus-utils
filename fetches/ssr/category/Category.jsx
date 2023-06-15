@@ -53,7 +53,7 @@ const getCategory = async params => {
   ]);
 
   const data = {
-    category: isEmpty(categoryVirtualData?.data)
+    category: isEmpty(categoryVirtualData?.data?.id)
       ? categoryData?.data
       : categoryVirtualData?.data,
     // : assign({}, categoryData?.data, categoryVirtualData?.data),
