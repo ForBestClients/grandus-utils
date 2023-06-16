@@ -53,7 +53,7 @@ const getProductDataStatic = async () => {
   paths = uniqBy(paths, 'urlTitle');
 
   // new next has option only for 100 paths per route...
-  paths = slice(paths, 0, 500);
+  paths = slice(paths, 0, 100);
 
   return paths;
 };
