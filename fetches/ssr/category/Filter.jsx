@@ -4,7 +4,7 @@ import { cache } from 'react';
 import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
-export const getFilterData = cache(async params => {
+export const getFilterDataPromise = cache(async params => {
   const req = {};
 
   const category = params?.props?.params?.category;
@@ -30,7 +30,7 @@ export const getFilterData = cache(async params => {
     .update(JSON.stringify(fetchData))
     .digest('hex');
 
-  const filter = await fetch(
+  return fetch(
     `${fetchData?.url}${
       (fetchData?.url.indexOf('?') > 0 ? '&cacheHash=' : '?cacheHash=') +
       urlHash
@@ -42,9 +42,11 @@ export const getFilterData = cache(async params => {
       console.error('error Filter.jsx', params);
       return {};
     });
-
-  return filter;
 });
+
+export const getFilterData = async params => {
+  return await getFilterDataPromise(params);
+};
 
 const getFilter = async params => {
   const filterData = await getFilterData(params);

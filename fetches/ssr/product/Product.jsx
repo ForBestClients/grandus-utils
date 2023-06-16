@@ -22,9 +22,7 @@ export const getProductPromise = async params => {
 };
 
 export const getProductData = async params => {
-  const [product] = await Promise.all([
-    getProductPromise(params),
-  ]);
+  const [product] = await Promise.all([getProductPromise(params)]);
 
   return product;
 };
