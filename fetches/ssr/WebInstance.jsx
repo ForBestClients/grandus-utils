@@ -1,9 +1,9 @@
-import { reqApiHost, reqGetHeadersBasic } from '/grandus-lib/utils/edge';
+import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
 
-const getWebInstance = async () => {
+export const getWebInstancePromise = async () => {
   const req = {};
 
-  const webinstance = await fetch(
+  return fetch(
     `${reqApiHost(req)}/api/web-instance?id=${process.env.GRANDUS_TOKEN_HOST}`,
     {
       headers: reqGetHeadersBasic(req),
@@ -12,6 +12,10 @@ const getWebInstance = async () => {
   )
     .then(result => result.json())
     .then(r => r?.webInstance);
+};
+
+const getWebInstance = async () => {
+  const webinstance = await getWebInstancePromise();
 
   return webinstance;
 };
