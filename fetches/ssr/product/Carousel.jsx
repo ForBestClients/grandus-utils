@@ -27,12 +27,27 @@ const getCarouselData = async params => {
     !isEmpty(uri) ? `?${uri.join('&')}` : ''
   }`;
 
-  const carousels = await fetch(url, {
-    headers: reqGetHeaders(req),
-    next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
-  })
-    .then(result => result.json())
-    .then(r => r.data);
+  let carousels = [];
+
+  try {
+    carousels = await fetch(url, {
+      headers: reqGetHeaders(req),
+      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
+    })
+      .then(result => {
+        if (!result.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return result.json();
+      })
+      .then(r => r.data);
+  } catch (error) {
+    console.error(
+      'There has been a problem with your fetch operation: ',
+      error,
+    );
+    carousels = [];
+  }
 
   return carousels;
 };
