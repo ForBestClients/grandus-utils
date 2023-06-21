@@ -10,7 +10,16 @@ export const getProductPromise = async params => {
   const processedFields = getProcessedCardFields('crosssaleProducts.products.');
 
   uri.push(`fields=${[...productDetailFields, ...processedFields].join(',')}`);
-  uri.push(getApiExpand('PRODUCT_DETAIL', true));
+
+  if (params?.expand) {
+    uri.push(`expand=${params.expand}`);
+  } else {
+    if (params?.allData) {
+      uri.push(getApiExpand('PRODUCT_DETAIL_ALL', true));
+    } else {
+      uri.push(getApiExpand('PRODUCT_DETAIL', true));
+    }
+  }
 
   return fetch(
     `${reqApiHost(req)}/api/v2/products/${params?.urlTitle}?${uri.join('&')}`,

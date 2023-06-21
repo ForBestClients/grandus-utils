@@ -21,7 +21,7 @@ const getProductMetadata = async props => {
 
   const meta = getMetaData(
     product?.name,
-    product?.shortProductDescription?.description,
+    product?.shortDescription,
     'mobilonline.sk',
     {},
     { alternates: { canonical: `/produkt/${product?.urlTitle}` } },
