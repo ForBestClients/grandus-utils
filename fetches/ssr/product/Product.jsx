@@ -14,11 +14,7 @@ export const getProductPromise = async params => {
   if (params?.expand) {
     uri.push(`expand=${params.expand}`);
   } else {
-    if (params?.allData) {
-      uri.push(getApiExpand('PRODUCT_DETAIL_ALL', true));
-    } else {
-      uri.push(getApiExpand('PRODUCT_DETAIL', true));
-    }
+    uri.push(getApiExpand('PRODUCT_DETAIL', true));
   }
 
   return fetch(
