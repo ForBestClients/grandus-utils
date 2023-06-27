@@ -53,10 +53,6 @@ const getPromise = async (params, fields = null) => {
     });
 }
 
-export const getFilterCategoryDataPromise = async params => {
-  return getPromise(params, 'selected');
-};
-
 export const getFilterDataPromise = async params => {
   return getPromise(params);
 };
