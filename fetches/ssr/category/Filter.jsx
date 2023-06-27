@@ -3,6 +3,15 @@ import crypto from 'crypto';
 import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
+import cache, {
+  getCachedDataProps,
+  saveDataToCacheProps,
+} from 'grandus-lib/utils/cache';
+
+import { cache as cacheReact } from 'react';
+
+import isEmpty from 'lodash/isEmpty';
+
 const createUrl = (fetchData, fields = null) => {
   const urlHash = crypto
     .createHash('md5')
@@ -10,18 +19,17 @@ const createUrl = (fetchData, fields = null) => {
     .digest('hex');
 
   let url = `${fetchData?.url}${
-    (fetchData?.url.indexOf('?') > 0 ? '&cacheHash=' : '?cacheHash=') +
-    urlHash
+    (fetchData?.url.indexOf('?') > 0 ? '&cacheHash=' : '?cacheHash=') + urlHash
   }`;
 
   if (fields) {
-    url = url + `&fields=${fields}`
+    url = url + `&fields=${fields}`;
   }
 
   return url;
-}
+};
 
-const getPromise = async (params, fields = null) => {
+const getPromise = cacheReact(async (params, fields = null) => {
   const req = {};
 
   const category = params?.props?.params?.category;
@@ -42,19 +50,19 @@ const getPromise = async (params, fields = null) => {
     },
   };
 
-  return fetch(
-    createUrl(fetchData, fields),
-    fetchData?.body,
-  )
+  return fetch(createUrl(fetchData, fields), fetchData?.body)
     .then(result => result.json())
     .catch(() => {
       console.error('error Filter.jsx', params);
       return {};
     });
-}
+});
 
 export const getFilterCategoryDataPromise = async params => {
-  return getPromise(params, 'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory');
+  return getPromise(
+    params,
+    'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
+  );
 };
 
 export const getFilterDataPromise = async params => {
@@ -62,7 +70,26 @@ export const getFilterDataPromise = async params => {
 };
 
 export const getFilterData = async params => {
-  return await getFilterDataPromise(params);
+  const cachedData = await getCachedDataProps(
+    cache,
+    params,
+    '/grandus-utils/fetches/ssr/category/Filter.jsx',
+  );
+
+  if (!isEmpty(cachedData)) {
+    return cachedData;
+  }
+
+  const data = await getFilterDataPromise(params);
+
+  await saveDataToCacheProps(
+    cache,
+    data,
+    params,
+    '/grandus-utils/fetches/ssr/category/Filter.jsx',
+  );
+
+  return data;
 };
 
 const getFilter = async params => {
