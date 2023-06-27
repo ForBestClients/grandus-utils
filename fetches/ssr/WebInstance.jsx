@@ -1,6 +1,15 @@
 import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
 
-export const getWebInstancePromise = async () => {
+import cache, {
+  getCachedDataProps,
+  saveDataToCacheProps,
+} from 'grandus-lib/utils/cache';
+
+import { cache as cacheReact } from 'react';
+
+import isEmpty from 'lodash/isEmpty';
+
+export const getWebInstancePromise = cacheReact(async () => {
   const req = {};
 
   return fetch(
@@ -12,10 +21,27 @@ export const getWebInstancePromise = async () => {
   )
     .then(result => result.json())
     .then(r => r?.webInstance);
-};
+});
 
 const getWebInstance = async () => {
+  const cachedData = await getCachedDataProps(
+    cache,
+    {},
+    '/grandus-utils/fetches/ssr/WebInstance.jsx',
+  );
+
+  if (!isEmpty(cachedData)) {
+    return cachedData;
+  }
+
   const webinstance = await getWebInstancePromise();
+
+  await saveDataToCacheProps(
+    cache,
+    webinstance,
+    {},
+    '/grandus-utils/fetches/ssr/WebInstance.jsx',
+  );
 
   return webinstance;
 };

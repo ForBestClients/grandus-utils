@@ -1,7 +1,15 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+
+import cache, {
+  getCachedDataProps,
+  saveDataToCacheProps,
+} from 'grandus-lib/utils/cache';
+
+import { cache as cacheReact } from 'react';
+
 import isEmpty from 'lodash/isEmpty';
 
-export const getStaticBlocksPromise = async props => {
+export const getStaticBlocksPromise = cacheReact(async props => {
   const req = {};
   const uri = [];
 
@@ -24,7 +32,7 @@ export const getStaticBlocksPromise = async props => {
   if (props?.expand !== false) {
     uri.push(
       'expand=' +
-      (props?.expand ? props?.expand : 'customCss,customJavascript'),
+        (props?.expand ? props?.expand : 'customCss,customJavascript'),
     );
   }
 
@@ -37,10 +45,27 @@ export const getStaticBlocksPromise = async props => {
       next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     },
   ).then(result => result.json());
-};
+});
 
 const getStaticBlocks = async props => {
+  const cachedData = await getCachedDataProps(
+    cache,
+    props,
+    '/grandus-utils/fetches/ssr/StaticBlocks.jsx',
+  );
+
+  if (!isEmpty(cachedData)) {
+    return cachedData;
+  }
+
   const staticBlocks = await getStaticBlocksPromise(props);
+
+  await saveDataToCacheProps(
+    cache,
+    staticBlocks,
+    props,
+    '/grandus-utils/fetches/ssr/StaticBlocks.jsx',
+  );
 
   return staticBlocks;
 };
