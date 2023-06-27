@@ -2,12 +2,12 @@ import { getMetaData } from 'grandus-lib/utils/meta';
 
 import getCategoryData from 'grandus-utils/fetches/ssr/category/Category';
 import getBannerData from 'grandus-utils/fetches/ssr/category/Banner';
-import { getFilterDataPromise } from 'grandus-utils/fetches/ssr/category/Filter';
+import { getFilterDataPromise, getFilterCategoryDataPromise } from 'grandus-utils/fetches/ssr/category/Filter';
 
 const getCategoryMetadata = async props => {
   let [category, filterData] = await Promise.all([
     getCategoryData(props?.params),
-    getFilterDataPromise({ props: props }),
+    getFilterCategoryDataPromise({ props: props }),
   ]);
 
   const banner = await getBannerData(category?.category?.id);

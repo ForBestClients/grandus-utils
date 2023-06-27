@@ -53,6 +53,10 @@ const getPromise = async (params, fields = null) => {
     });
 }
 
+export const getFilterCategoryDataPromise = async params => {
+  return getPromise(params, 'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory');
+};
+
 export const getFilterDataPromise = async params => {
   return getPromise(params);
 };
