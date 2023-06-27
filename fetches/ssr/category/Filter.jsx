@@ -1,10 +1,27 @@
 import crypto from 'crypto';
-import { cache } from 'react';
 
 import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
-export const getFilterDataPromise = cache(async params => {
+const createUrl = (fetchData, fields = null) => {
+  const urlHash = crypto
+    .createHash('md5')
+    .update(JSON.stringify(fetchData))
+    .digest('hex');
+
+  let url = `${fetchData?.url}${
+    (fetchData?.url.indexOf('?') > 0 ? '&cacheHash=' : '?cacheHash=') +
+    urlHash
+  }`;
+
+  if (fields) {
+    url = url + `&fields=${fields}`
+  }
+
+  return url;
+}
+
+const getPromise = async (params, fields = null) => {
   const req = {};
 
   const category = params?.props?.params?.category;
@@ -25,16 +42,8 @@ export const getFilterDataPromise = cache(async params => {
     },
   };
 
-  const urlHash = crypto
-    .createHash('md5')
-    .update(JSON.stringify(fetchData))
-    .digest('hex');
-
   return fetch(
-    `${fetchData?.url}${
-      (fetchData?.url.indexOf('?') > 0 ? '&cacheHash=' : '?cacheHash=') +
-      urlHash
-    }`,
+    createUrl(fetchData, fields),
     fetchData?.body,
   )
     .then(result => result.json())
@@ -42,7 +51,15 @@ export const getFilterDataPromise = cache(async params => {
       console.error('error Filter.jsx', params);
       return {};
     });
-});
+}
+
+export const getFilterCategoryDataPromise = async params => {
+  return getPromise(params, 'selected');
+};
+
+export const getFilterDataPromise = async params => {
+  return getPromise(params);
+};
 
 export const getFilterData = async params => {
   return await getFilterDataPromise(params);
