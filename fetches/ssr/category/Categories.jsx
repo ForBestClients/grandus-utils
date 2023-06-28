@@ -49,7 +49,7 @@ const getCategories = async props => {
   );
 
   if (!isEmpty(cachedData)) {
-    return cachedData;
+    return cachedData?.data;
   }
 
   const data = await getCategoriesData(props);
