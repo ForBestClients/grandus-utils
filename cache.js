@@ -140,8 +140,10 @@ export const getCachedData = async (req, cache, options = {}) => {
   if (!cache) return false;
 
   const cacheKey =
-    getCacheKeyByType(get(options, 'cacheKeyType'), { req: req, ...options }) +
-    getLocalSuffix(req);
+    get(options, 'cacheKey',
+      getCacheKeyByType(get(options, 'cacheKeyType'), { req: req, ...options }) +
+      getLocalSuffix(req),
+    );
 
   const data = await cache.get(
     cacheKey,
@@ -214,8 +216,10 @@ export const saveDataToCache = async (req, cache, data, options = {}) => {
   }
 
   const cacheKey =
-    getCacheKeyByType(get(options, 'cacheKeyType'), { req: req, ...options }) +
-    getLocalSuffix(req);
+    get(options, 'cacheKey',
+      getCacheKeyByType(get(options, 'cacheKeyType'), { req: req, ...options }) +
+      getLocalSuffix(req),
+    );
 
   try {
     cache.set(cacheKey, JSON.stringify(data), 'EX', cacheTime);
