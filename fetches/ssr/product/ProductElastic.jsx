@@ -7,7 +7,8 @@ export const getProductPromiseElastic = async params => {
   return fetch(
     `${reqApiHost({})}/api/v2/products?urlTitle=${urlTitle}`,
     {
-      headers: reqGetHeadersBasic({})
+      headers: reqGetHeadersBasic({}),
+      cache: "no-cache",
     },
   )
     .then(result => result.json())
