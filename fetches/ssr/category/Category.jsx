@@ -2,11 +2,14 @@ import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 
 import { arrayToPath } from 'grandus-lib/utils/filter';
 
+import { cache as cacheReact } from 'react';
+
 import isEmpty from 'lodash/isEmpty';
+import assign from 'lodash/assign';
 
 import crypto from 'crypto';
 
-const getCategory = async params => {
+const getCategory = cacheReact(async params => {
   const req = {};
   const category = params?.category;
   const externalUrl = `/kategoria/${category}${
@@ -53,13 +56,21 @@ const getCategory = async params => {
   ]);
 
   const data = {
-    category: isEmpty(categoryVirtualData?.data?.id)
-      ? categoryData?.data
-      : categoryVirtualData?.data,
+    category:
+      categoryVirtualData?.data?.id && categoryVirtualData?.data?.description
+        ? assign({}, categoryData?.data, {
+            description: categoryVirtualData?.data?.description,
+          })
+        : categoryData?.data,
+
+    // category: categoryVirtualData?.data?.id
+    //   ? categoryVirtualData?.data
+    //   : categoryData?.data,
+
     // : assign({}, categoryData?.data, categoryVirtualData?.data),
   };
 
   return data;
-};
+});
 
 export default getCategory;
