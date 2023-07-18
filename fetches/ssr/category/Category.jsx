@@ -6,8 +6,32 @@ import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import assign from 'lodash/assign';
+import size from 'lodash/size';
 
 import crypto from 'crypto';
+
+const handleCategoryData = (category, categoryVirtual) => {
+  if (isEmpty(categoryVirtual)) {
+    return category;
+  }
+
+  const categoryOverride = {};
+
+  if (categoryVirtual?.id) {
+    categoryOverride.description = categoryVirtual?.description
+      ? categoryVirtual?.description
+      : '';
+
+    categoryOverride.childCategories = categoryVirtual?.childCategories
+      ? categoryVirtual?.childCategories
+      : [];
+
+    categoryOverride.hash = categoryVirtual?.hash ? categoryVirtual?.hash : '';
+  }
+
+  const result = assign({}, category, categoryOverride);
+  return result;
+};
 
 const getCategory = cacheReact(async params => {
   const req = {};
@@ -56,18 +80,7 @@ const getCategory = cacheReact(async params => {
   ]);
 
   const data = {
-    category:
-      categoryVirtualData?.data?.id && categoryVirtualData?.data?.description
-        ? assign({}, categoryData?.data, {
-            description: categoryVirtualData?.data?.description,
-          })
-        : categoryData?.data,
-
-    // category: categoryVirtualData?.data?.id
-    //   ? categoryVirtualData?.data
-    //   : categoryData?.data,
-
-    // : assign({}, categoryData?.data, categoryVirtualData?.data),
+    category: handleCategoryData(categoryData?.data, categoryVirtualData?.data),
   };
 
   return data;
