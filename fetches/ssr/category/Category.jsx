@@ -27,9 +27,11 @@ const handleCategoryData = (category, categoryVirtual) => {
       : [];
 
     categoryOverride.hash = categoryVirtual?.hash ? categoryVirtual?.hash : '';
+    categoryOverride.isVirtual = true;
   }
 
-  const result = assign({}, category, categoryOverride);
+  const result = assign({ isVirtual: false }, category, categoryOverride);
+
   return result;
 };
 
