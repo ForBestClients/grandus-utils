@@ -28,9 +28,10 @@ const handleCategoryData = (category, categoryVirtual) => {
 
     categoryOverride.hash = categoryVirtual?.hash ? categoryVirtual?.hash : '';
     categoryOverride.isVirtual = true;
-    if (categoryVirtual.title) {
-      categoryOverride.title = categoryVirtual.title;
-    }
+    // TODO: allow title override when the new tree will be ready to use
+    // if (categoryVirtual.title) {
+    //   categoryOverride.title = categoryVirtual.title;
+    // }
   }
 
   const result = assign({ isVirtual: false }, category, categoryOverride);
