@@ -28,6 +28,9 @@ const handleCategoryData = (category, categoryVirtual) => {
 
     categoryOverride.hash = categoryVirtual?.hash ? categoryVirtual?.hash : '';
     categoryOverride.isVirtual = true;
+    if (categoryVirtual.title) {
+      categoryOverride.title = categoryVirtual.title;
+    }
   }
 
   const result = assign({ isVirtual: false }, category, categoryOverride);
