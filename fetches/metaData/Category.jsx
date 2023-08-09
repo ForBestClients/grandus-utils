@@ -38,7 +38,7 @@ const getCategoryMetadata = async props => {
     seoTitle,
     filterData?.meta?.description
       ? filterData?.meta?.description
-      : category?.category?.description,
+      : category?.category?.perex,
     'mobilonline.sk',
     banner?.photo,
     {

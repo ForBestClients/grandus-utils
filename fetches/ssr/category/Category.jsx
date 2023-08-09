@@ -21,6 +21,9 @@ const handleCategoryData = (category, categoryVirtual) => {
     categoryOverride.description = categoryVirtual?.description
       ? categoryVirtual?.description
       : '';
+    categoryOverride.shortDescription = categoryVirtual?.shortDescription
+      ? categoryVirtual?.shortDescription
+      : '';
 
     categoryOverride.childCategories = categoryVirtual?.childCategories
       ? categoryVirtual?.childCategories
