@@ -13,11 +13,17 @@ const ImageWrapped = ({
   className,
   quality = 75,
 }) => {
+  const src = getImageUrl(photo, `${width}x${height}`, type);
+
+  if (!src) {
+    return ''; //todo placeholder
+  }
+
   return (
     <Image
       width={width}
       height={height}
-      src={getImageUrl(photo, `${width}x${height}`, type)}
+      src={src}
       title={title}
       alt={alt ? alt : ' '}
       priority={priority}

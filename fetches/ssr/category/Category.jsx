@@ -18,9 +18,12 @@ const handleCategoryData = (category, categoryVirtual) => {
   const categoryOverride = {};
 
   if (categoryVirtual?.id) {
+    categoryOverride.isVirtual = true;
+
     categoryOverride.description = categoryVirtual?.description
       ? categoryVirtual?.description
       : '';
+
     categoryOverride.shortDescription = categoryVirtual?.shortDescription
       ? categoryVirtual?.shortDescription
       : '';
@@ -29,12 +32,16 @@ const handleCategoryData = (category, categoryVirtual) => {
       ? categoryVirtual?.childCategories
       : [];
 
-    categoryOverride.hash = categoryVirtual?.hash ? categoryVirtual?.hash : '';
-    categoryOverride.isVirtual = true;
-    // TODO: allow title override when the new tree will be ready to use
-    // if (categoryVirtual.title) {
-    //   categoryOverride.title = categoryVirtual.title;
-    // }
+    if (categoryVirtual?.hash) {
+      categoryOverride.hash = categoryVirtual?.hash;
+    }
+
+    if (
+      categoryVirtual?.title &&
+      categoryVirtual?.title !== categoryVirtual?.name
+    ) {
+      categoryOverride.title = categoryVirtual.title;
+    }
   }
 
   const result = assign({ isVirtual: false }, category, categoryOverride);
