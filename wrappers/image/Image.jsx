@@ -12,9 +12,9 @@ const ImageWrapped = ({
   priority,
   className,
   quality = 75,
-  isCropped = false,
+  suffix = "",
 }) => {
-  const src = getImageUrl(photo, `${width}x${height}${isCropped ? '__cropped' : ''}`, type);
+  const src = getImageUrl(photo, `${width}x${height}${suffix}`, type);
 
   if (!src) {
     return ''; //todo placeholder
