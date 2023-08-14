@@ -14,7 +14,7 @@ const ImageWrapped = ({
   quality = 75,
   suffix = "",
 }) => {
-  const src = getImageUrl(photo, `${width}x${height}${suffix}`, type);
+  const src = getImageUrl(photo, `${width}x${height}${suffix ? suffix : ''}`, type);
 
   if (!src) {
     return ''; //todo placeholder
