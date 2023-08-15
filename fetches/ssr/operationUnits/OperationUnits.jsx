@@ -7,7 +7,9 @@ async function getOperationUnits() {
     fetch(
       `${reqApiHost(
         req,
-      )}/api/v2/operation-units?expand=openingHours,town.county,parameters`,
+      )}/api/v2/operation-units?expand=${
+        process.env.NEXT_PUBLIC_OPERATION_UNITS_EXPAND
+      }`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
