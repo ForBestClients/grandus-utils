@@ -57,7 +57,7 @@ const getCategory = cacheReact(async params => {
   }${arrayToPath(params?.parameters)}`; //@todo paginacia
 
   const body = JSON.stringify({
-    externalUrl: externalUrl,
+    externalUrl: decodeURIComponent(externalUrl),
   });
 
   const urlHash = crypto.createHash('md5').update(body).digest('hex');
