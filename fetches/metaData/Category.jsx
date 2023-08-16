@@ -29,17 +29,27 @@ const getCategoryMetadata = async props => {
     }
   });
 
-  const seoTitle = category?.category?.title
-    + (isEmpty(seoTitleDataNormalized)
-      ? ''
-      : ' ' + seoTitleDataNormalized.join(', '));
+  let seoTitle = '';
+
+  if (
+    category?.category?.title !== category?.category?.name &&
+    category?.category?.title
+  ) {
+    seoTitle = category?.category?.title;
+  } else {
+    seoTitle =
+      category?.category?.title +
+      (isEmpty(seoTitleDataNormalized)
+        ? ''
+        : ' ' + seoTitleDataNormalized.join(', '));
+  }
 
   const meta = getMetaData(
     seoTitle,
     filterData?.meta?.description
       ? filterData?.meta?.description
       : category?.category?.perex,
-    'mobilonline.sk',
+    '| mobilonline.sk',
     banner?.photo,
     {
       keywords: filterData?.meta?.keywords,
