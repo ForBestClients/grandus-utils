@@ -6,7 +6,7 @@ import get from 'lodash/get';
 
 import { getFilterData } from 'grandus-utils/fetches/ssr/category/Filter';
 
-import { getFilterUrl } from 'grandus-lib/utils/filter';
+import { getFilterUrl, arrayToParams } from 'grandus-lib/utils/filter';
 
 const getSubCategories = async props => {
   const filterData = await getFilterData({ props: { params: props } });
@@ -52,7 +52,7 @@ const getSubCategories = async props => {
     const url = getFilterUrl(
       props?.category,
       [],
-      {},
+      props?.parameters ? arrayToParams(props?.parameters) : {},
       parameterTitle,
       parameterValueTitle,
     );
