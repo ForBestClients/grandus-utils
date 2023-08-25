@@ -40,6 +40,10 @@ const handleCategoryData = (category, categoryVirtual) => {
       categoryOverride.hash = categoryVirtual?.hash;
     }
 
+    if (categoryVirtual?.perex) {
+      categoryOverride.perex = categoryVirtual?.perex;
+    }
+
     if (
       categoryVirtual?.title &&
       categoryVirtual?.title !== categoryVirtual?.name
