@@ -40,7 +40,7 @@ const getProductsData = async data => {
       method: 'POST',
       headers: reqGetHeaders(req),
       body: JSON.stringify(body),
-      cache: 'force-cache',
+      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     },
   };
 
