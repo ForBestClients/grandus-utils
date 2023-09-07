@@ -8,6 +8,7 @@ const getBrands = async (props) => {
     `${reqApiHost(req)}/api/v2/brands?per-page=${props?.perPage ? props?.perPage : "12"}&orderBy=priority-desc`,
     {
       headers: reqGetHeaders(req),
+      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     }
   )
     .then((result) => result.json())
