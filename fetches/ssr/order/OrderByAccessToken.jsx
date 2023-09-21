@@ -1,5 +1,4 @@
-import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
-
+import { getApiExpand, getApiFields, reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 const getOrder = async token => {
   const req = {};
 
@@ -7,7 +6,12 @@ const getOrder = async token => {
     return null;
   }
 
-  const result = await fetch(`${reqApiHost(req)}/api/v2/orders/${token}`, {
+  const uri = [];
+
+  uri.push(getApiFields('ORDER', true));
+  uri.push(getApiExpand('ORDER', true));
+
+  const result = await fetch(`${reqApiHost(req)}/api/v2/orders/${token}?${uri.join('&')}`, {
     headers: reqGetHeaders(req),
     next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
   })
