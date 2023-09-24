@@ -33,7 +33,7 @@ const getBlogData = async props => {
   if (props?.fields) {
     uri.push(`fields=${props?.fields}`);
   } else {
-    uri.push(`fields=id,title,urlTitle,photo,perex,publishTime`);
+    uri.push(`fields=id,title,subtitle,urlTitle,photo,perex,publishTime`);
   }
 
   const url = `${reqApiHost(req)}/api/v2/blogs${
