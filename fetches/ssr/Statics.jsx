@@ -45,6 +45,10 @@ const revalidateCache = async props => {
 };
 
 export const getStaticsData = async props => {
+  if (props?.disableCache) {
+    return getStaticsDataPromise(props);
+  }
+
   const cachedData = await getCachedDataProps(
     cache,
     props,
