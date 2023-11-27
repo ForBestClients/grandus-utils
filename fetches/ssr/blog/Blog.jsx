@@ -45,7 +45,10 @@ const getBlogData = async props => {
   let [blogs] = await Promise.all([
     fetch(url, {
       headers: reqGetHeaders(req),
-      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
+      next: {
+        revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE),
+        tags: ['blog'],
+      },
     })
       .then(result => {
         pagination = getPaginationFromHeaders(result.headers);

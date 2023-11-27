@@ -39,7 +39,10 @@ const getBannersData = cacheReact(async params => {
     }`,
     {
       headers: reqGetHeaders(req),
-      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
+      next: {
+        revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE),
+        tags: ['banner'],
+      },
     },
   )
     .then(result => result.json())

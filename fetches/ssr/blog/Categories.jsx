@@ -6,7 +6,10 @@ async function getCategoriesData() {
   const [categories] = await Promise.all([
     fetch(`${reqApiHost(req)}/api/v2/blogs/categories`, {
       headers: reqGetHeaders(req),
-      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
+      next: {
+        revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE),
+        tags: ['blog'],
+      },
     })
       .then(result => result.json())
       .then(r => r.data),
