@@ -6,6 +6,7 @@ const isExtendedCart = req => {
   const obj = new URL(referer);
 
   switch (obj.pathname) {
+    case '/kosik':
     case '/kosik/kontakt':
     case '/kosik/doprava-a-platba':
       return true;
