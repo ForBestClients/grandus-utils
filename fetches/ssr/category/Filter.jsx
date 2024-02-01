@@ -8,8 +8,6 @@ import cache, {
   saveDataToCacheProps,
 } from 'grandus-lib/utils/cache';
 
-import { cache as cacheReact } from 'react';
-
 import isEmpty from 'lodash/isEmpty';
 
 const createUrl = (fetchData, fields = null) => {
@@ -29,7 +27,7 @@ const createUrl = (fetchData, fields = null) => {
   return url;
 };
 
-const getPromise = cacheReact(async (params, fields = null) => {
+const getPromise = async (params, fields = null) => {
   const req = {};
 
   const category = params?.props?.params?.category;
@@ -56,7 +54,7 @@ const getPromise = cacheReact(async (params, fields = null) => {
       console.error('error Filter.jsx', params);
       return {};
     });
-});
+};
 
 export const getFilterCategoryDataPromise = async params => {
   return getPromise(
