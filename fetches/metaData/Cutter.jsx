@@ -10,6 +10,7 @@ const getCutterMetadata = async props => {
     productShiny?.shortProductDescription?.description,
     'mobilonline.sk',
     {},
+    { viewport: { disable: true } },
   );
 
   return meta;
