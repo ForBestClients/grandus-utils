@@ -8,6 +8,7 @@ import { getFilterData } from 'grandus-utils/fetches/ssr/category/Filter';
 
 import { getFilterUrl, arrayToParams } from 'grandus-lib/utils/filter';
 import omit from 'lodash/omit';
+import isFunction from 'lodash/isFunction';
 
 const getSubCategories = async props => {
   const filterData = await getFilterData({ props: { params: props } });
@@ -22,8 +23,6 @@ const getSubCategories = async props => {
   );
 
   const subCategories = [];
-
-  console.log(props);
 
   map(parameter?.values, (parameterValue, index) => {
     if (limit && index >= limit) {
@@ -52,12 +51,14 @@ const getSubCategories = async props => {
       ),
     );
 
+    const parameters = isFunction(props?.callback)
+      ? props.callback(arrayToParams(props?.parameters ?? {}))
+      : (arrayToParams(props?.parameters ?? {}));
+
     const url = getFilterUrl(
       props?.category,
       [],
-      props?.parameters
-        ? omit(arrayToParams(props?.parameters), props.category === 'prislusenstvo-na-mobil' ? ['seria'] : [])
-        : {},
+      parameters,
       parameterTitle,
       parameterValueTitle,
     );
@@ -71,8 +72,6 @@ const getSubCategories = async props => {
       urlName: props?.category,
     });
   });
-
-  console.log(subCategories);
 
   return subCategories;
 };
