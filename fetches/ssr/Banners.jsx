@@ -32,6 +32,9 @@ const getBannersData = cacheReact(async params => {
   if (params?.propertyId) {
     uri.push('propertyId=' + params?.propertyId);
   }
+  if(params?.limit) {
+    uri.push('limit=' + params?.limit);
+  }
 
   const result = await fetch(
     `${reqApiHost(req)}/api/v2/banners${
