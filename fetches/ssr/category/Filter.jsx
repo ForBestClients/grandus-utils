@@ -44,7 +44,6 @@ const getPromise = async (params, fields = null) => {
       method: 'POST',
       headers: reqGetHeaders(req),
       body: JSON.stringify(body),
-      cache: 'force-cache',
     },
   };
 
