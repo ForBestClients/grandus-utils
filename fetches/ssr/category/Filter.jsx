@@ -30,6 +30,7 @@ const createUrl = (fetchData, fields = null) => {
 const getPromise = async (params, fields = null) => {
   const req = {};
 
+  const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;
   const parameters = params?.props?.params?.parameters;
 
@@ -37,6 +38,10 @@ const getPromise = async (params, fields = null) => {
     categoryName: category,
     ...getApiBodyFromParams(arrayToParams(parameters)),
   };
+
+  if (search) {
+    body.search = search;
+  }
 
   const fetchData = {
     url: `${reqApiHost(req)}/api/v2/filters${reqExtractUri(req?.url)}`,
