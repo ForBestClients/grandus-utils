@@ -12,6 +12,10 @@ const getBlogData = async props => {
 
   const uri = [];
 
+  if (props?.params?.isLocked !== undefined) {
+    uri.push(`isLocked=${props?.params?.isLocked}`)
+  }
+
   if (props?.perPage) {
     uri.push(`per-page=${props?.perPage}`);
   } else {
