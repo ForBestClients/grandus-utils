@@ -13,10 +13,9 @@ import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
 const getProductsData = async data => {
   const req = {};
-
   const params = get(data, 'params');
 
-  const orderBy = get(data, 'searchParams.orderBy');
+  const orderBy = get(data, 'searchParams.orderBy', process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING);
 
   const category = get(data, 'params.category');
   const parameters = get(data, 'params.parameters', []);
