@@ -30,6 +30,7 @@ const ImageWrapped = ({
       priority={priority}
       className={className}
       quality={quality}
+      sizes="100vw"
     />
   );
 };
