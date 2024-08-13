@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { getImageUrl } from 'grandus-lib/utils/index';
+import {getImageUrl, isRetina} from 'grandus-lib/utils/index';
 
 const ImageWrapped = ({
   photo,
@@ -11,8 +11,8 @@ const ImageWrapped = ({
   alt,
   priority,
   className,
-  quality = 75,
-  suffix = "",
+  quality = 80,
+  suffix = "@2x",
 }) => {
   const src = getImageUrl(photo, `${width}x${height}${suffix ? suffix : ''}`, type);
 
