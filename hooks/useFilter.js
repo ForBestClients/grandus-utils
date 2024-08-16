@@ -372,6 +372,7 @@ const useFilter = ({
   useDataFromRouter = false,
   fields = null,
   allProducts = false,
+  enabled = true,
 } = {}) => {
   const router = useRouter();
   let uri = [];
@@ -421,7 +422,7 @@ const useFilter = ({
     data: filter,
     mutate,
     isValidating,
-  } = useSWR(url, url => fetch(url).then(r => r.json()), {
+  } = useSWR(enabled ? url : false, url => fetch(url).then(r => r.json()), {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     shouldRetryOnError: true,
