@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import {getImageUrl, isRetina} from 'grandus-lib/utils/index';
+import {getImageUrl} from 'grandus-lib/utils/index';
 
 const ImageWrapped = ({
   photo,
