@@ -47,8 +47,6 @@ const getBlogData = async props => {
 
   uri.push(`fields=${[fields, expandFields].join(',')}`)
 
-  console.log(uri);
-
   const url = `${reqApiHost(req)}/api/v2/blogs${
     !isEmpty(uri) ? `?${uri.join('&')}` : ''
   }`;
