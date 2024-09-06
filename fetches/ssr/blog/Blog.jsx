@@ -34,13 +34,20 @@ const getBlogData = async props => {
     uri.push(`page=${props?.searchParams?.page}`);
   }
 
-  if (props?.fields) {
-    uri.push(`fields=${props?.fields}`);
-  } else {
-    uri.push(
-      `fields=id,title,subtitle,urlTitle,photo,perex,publishTime,tags,communityCategory,category`,
-    );
+  let expandFields = '';
+  if (props?.expand) {
+    expandFields = props.expand;
+    uri.push(`expand=${props.expand}`);
   }
+
+  let fields = 'id,title,subtitle,urlTitle,photo,perex,publishTime,tags,communityCategory,category';
+  if (props?.fields) {
+    fields = props.fields;
+  }
+
+  uri.push(`fields=${[fields, expandFields].join(',')}`)
+
+  console.log(uri);
 
   const url = `${reqApiHost(req)}/api/v2/blogs${
     !isEmpty(uri) ? `?${uri.join('&')}` : ''
