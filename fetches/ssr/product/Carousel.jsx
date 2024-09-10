@@ -27,6 +27,7 @@ const getCarouselData = cacheReact(async params => {
   uri.push(`location=${params?.location ? params?.location : 1}`);
   uri.push(`type=${params?.type ? params?.type : 1}`);
   uri.push(`layout=${params?.layout ? params?.layout : 1}`);
+  uri.push(`orderBy=${params?.orderBy ? params?.orderBy : 'priority-desc'}`);
 
   if (params?.fields) {
     uri.push(`fields=${params?.fields}`);
