@@ -1,4 +1,6 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import reduce from "lodash/reduce";
+import {cookies} from "next/headers";
 import {
   CUTTER_MATTE_ELASTIC_PATH,
   CUTTER_MATTE_PATH,
@@ -9,6 +11,12 @@ import get from 'lodash/get';
 
 export const getCutterShinyPromise = () => {
   const req = {};
+  const cookieStore = cookies()
+  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
+    acc[item?.name]=item?.value
+    return acc
+  }, {});
+  req.cookies = cookieObject
 
   return fetch(`${reqApiHost(req)}${CUTTER_SHINY_PATH}`, {
     headers: reqGetHeaders(req),

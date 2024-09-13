@@ -1,6 +1,8 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 
 import { arrayToPath } from 'grandus-lib/utils/filter';
+import reduce from "lodash/reduce";
+import {cookies} from "next/headers";
 
 import { cache as cacheReact } from 'react';
 
@@ -59,6 +61,12 @@ const handleCategoryData = (category, categoryVirtual) => {
 
 const getCategory = cacheReact(async params => {
   const req = {};
+  const cookieStore = cookies()
+  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
+    acc[item?.name]=item?.value
+    return acc
+  }, {});
+  req.cookies = cookieObject
   const category = params?.category;
   const externalUrl = `/kategoria/${category}${
     !isEmpty(params?.parameters) ? '/' : ''

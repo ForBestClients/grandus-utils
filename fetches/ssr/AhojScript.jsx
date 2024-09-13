@@ -1,8 +1,16 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
 import { getWebInstanceRawPromise } from 'grandus-utils/fetches/promises/WebInstance';
+import reduce from "lodash/reduce";
+import {cookies} from "next/headers";
 
 const getAhojScript = async () => {
-  const req = {};
+    const req = {};
+    const cookieStore = cookies()
+    const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
+        acc[item?.name]=item?.value
+        return acc
+    }, {});
+    req.cookies = cookieObject
   const webinstance = await getWebInstanceRawPromise();
 
   let response = '';

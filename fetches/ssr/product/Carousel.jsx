@@ -1,5 +1,7 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 import isEmpty from 'lodash/isEmpty';
+import reduce from "lodash/reduce";
+import {cookies} from "next/headers";
 import { getProcessedCardFields } from 'utils';
 
 import cache, {
@@ -21,6 +23,12 @@ const getCarouselData = cacheReact(async params => {
   }
 
   const req = {};
+  const cookieStore = cookies()
+  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
+    acc[item?.name]=item?.value
+    return acc
+  }, {});
+  req.cookies = cookieObject
 
   const uri = [];
 

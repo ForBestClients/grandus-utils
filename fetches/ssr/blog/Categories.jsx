@@ -1,8 +1,16 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 import isEmpty from "lodash/isEmpty";
+import reduce from "lodash/reduce";
+import {cookies} from "next/headers";
 
 async function getCategoriesData(props) {
-  const req = {};
+    const req = {};
+    const cookieStore = cookies()
+    const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
+        acc[item?.name]=item?.value
+        return acc
+    }, {});
+    req.cookies = cookieObject
 
   const uri = [];
   if (props?.forum !== undefined) {
