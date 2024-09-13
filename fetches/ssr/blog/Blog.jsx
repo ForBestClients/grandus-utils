@@ -5,19 +5,9 @@ import {
 } from 'grandus-lib/utils';
 
 import isEmpty from 'lodash/isEmpty';
-import reduce from "lodash/reduce";
-import {cookies} from "next/headers";
 
 const getBlogData = async props => {
-
   const req = {};
-  const cookieStore = cookies()
-  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
-    acc[item?.name]=item?.value
-    return acc
-  }, {});
-  req.cookies = cookieObject
-
   let pagination = {};
 
   const uri = [];

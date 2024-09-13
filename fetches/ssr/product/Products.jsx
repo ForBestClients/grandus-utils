@@ -1,16 +1,8 @@
 import { reqApiHost, reqGetHeadersBasic } from '/grandus-lib/utils/edge';
 import { getProductCardFields,reqGetHeaders } from 'grandus-lib/utils';
-import reduce from "lodash/reduce";
-import {cookies} from "next/headers";
 
 const getProducts = async params => {
   const req = {};
-  const cookieStore = cookies()
-  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
-    acc[item?.name]=item?.value
-    return acc
-  }, {});
-  req.cookies = cookieObject
 
   const products = await Promise.all([
     fetch(

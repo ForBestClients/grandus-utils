@@ -1,15 +1,7 @@
 import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
-import reduce from "lodash/reduce";
-import {cookies} from "next/headers";
 
 async function getOperationUnits() {
   const req = {};
-  const cookieStore = cookies()
-  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
-    acc[item?.name]=item?.value
-    return acc
-  }, {});
-  req.cookies = cookieObject
 
   const expand = process.env.NEXT_PUBLIC_OPERATION_UNITS_EXPAND
     ? process.env.NEXT_PUBLIC_OPERATION_UNITS_EXPAND

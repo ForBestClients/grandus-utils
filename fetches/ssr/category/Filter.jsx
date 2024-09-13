@@ -9,8 +9,6 @@ import cache, {
 } from 'grandus-lib/utils/cache';
 
 import isEmpty from 'lodash/isEmpty';
-import reduce from "lodash/reduce";
-import {cookies} from "next/headers";
 
 const createUrl = (fetchData, fields = null) => {
   const urlHash = crypto
@@ -31,12 +29,6 @@ const createUrl = (fetchData, fields = null) => {
 
 const getPromise = async (params, fields = null) => {
   const req = {};
-  const cookieStore = cookies()
-  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
-    acc[item?.name]=item?.value
-    return acc
-  }, {});
-  req.cookies = cookieObject
 
   const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;

@@ -4,8 +4,6 @@ import cache, {
   getCachedDataProps,
   saveDataToCacheProps,
 } from 'grandus-lib/utils/cache';
-import reduce from "lodash/reduce";
-import {cookies, headers} from "next/headers";
 
 import { cache as cacheReact } from 'react';
 
@@ -24,13 +22,6 @@ const getBannersData = cacheReact(async params => {
   }
 
   const req = {};
-  const cookieStore = cookies()
-  const cookieObject = reduce(cookieStore.getAll(), (acc, item)=> {
-    acc[item?.name]=item?.value
-  return acc
-  }, {});
-  req.cookies = cookieObject
-
 
   let uri = [];
 
