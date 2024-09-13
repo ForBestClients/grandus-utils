@@ -23,6 +23,10 @@ const getBannersData = cacheReact(async params => {
 
   const req = {};
 
+  if(params?.cookies) {
+    req.cookies = params?.cookies
+  }
+
   let uri = [];
 
   if (params?.type) {

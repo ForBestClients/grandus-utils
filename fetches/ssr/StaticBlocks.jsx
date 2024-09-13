@@ -11,6 +11,10 @@ import isEmpty from 'lodash/isEmpty';
 
 export const getStaticBlocksPromise = cacheReact(async props => {
   const req = {};
+  if(props?.cookies) {
+    req.cookies = props?.cookies
+  }
+
   const uri = [];
 
   if (props?.hash) {

@@ -11,6 +11,9 @@ import isEmpty from 'lodash/isEmpty';
 
 export const getStaticsDataPromise = cacheReact(async props => {
   const req = {};
+  if(props?.cookies) {
+    req.cookies = props?.cookies
+  }
 
   const uri = [];
 
