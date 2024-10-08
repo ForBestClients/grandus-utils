@@ -1,9 +1,11 @@
-import {withIronSessionApiRoute} from "iron-session/next";
+
 import {GENERAL_CONSTANT} from "grandus-lib/constants/SessionConstants";
 import {get} from "lodash";
+import {getIronSession} from "iron-session";
+import {cookies} from "next/headers";
 
 export default function withSession(handler) {
-  return withIronSessionApiRoute(handler, {
+  return getIronSession(cookies(), {
     password: process.env.SECRET_COOKIE_PASSWORD,
     cookieName: GENERAL_CONSTANT,
     cookieOptions: {
