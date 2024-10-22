@@ -21,7 +21,7 @@ const useRecentlyViewed = () => {
   const itemExists = productId => {
     return (
       get(recentlyViewed, 'productIds', []).findIndex(
-        element => element == productId,
+        element => element === productId,
       ) >= 0
     );
   };
