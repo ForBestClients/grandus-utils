@@ -1,56 +1,33 @@
-import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
-import cache, {getCachedDataProps, saveDataToCacheProps} from "@/grandus-lib/utils/cache";
-import isEmpty from "lodash/isEmpty";
+import {
+  reqGetHeaders,
+  reqApiHost,
+  getPaginationFromHeaders,
+} from 'grandus-lib/utils';
 
-async function getOperationUnitsPromises() {
+export const revalidate = process.env.NEXT_PUBLIC_REVALIDATE;
+
+const getOperationUnits = async props => {
   const req = {};
 
-  const uri = [];
-
-  if (props?.id) {
-    uri.push('id=' + encodeURIComponent(props?.hash));
+  let expand = 'openingHours';
+  if(props?.expand){
+    expand = props?.expand;
   }
-
-  if (props?.perPage !== false) {
-    uri.push('per-page=' + (props?.perPage ? props?.perPage : '999'));
-  }
-uri.push(process.env.NEXT_PUBLIC_OPERATION_UNITS_EXPAND
-    ? process.env.NEXT_PUBLIC_OPERATION_UNITS_EXPAND
-    : 'openingHours, town.county, parameters');
 
   const [operationUnits] = await Promise.all([
-    fetch(`${reqApiHost(req)}/api/v2/operation-units?${uri.join('&')}`, {
+    fetch(`${reqApiHost(req)}/api/v2/operation-units?expand=${expand}`, {
       headers: reqGetHeaders(req),
       next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     })
-      .then(result => result.json())
+      .then(result => {
+        return result.json();
+      })
+      .then(r => r.data),
   ]);
 
-  return operationUnits;
-}
-
-
-const getOperationUnits = async props => {
-  const cachedData = await getCachedDataProps(
-      cache,
-      props,
-      '/grandus-utils/fetches/ssr/OperationUnits.jsx',
-  );
-
-  if (!isEmpty(cachedData)) {
-    return cachedData;
-  }
-
-  const operationUnits = await getOperationUnitsPromises(props);
-
-  await saveDataToCacheProps(
-      cache,
-      operationUnits,
-      props,
-      '/grandus-utils/fetches/ssr/OperationUnits.jsx',
-  );
-
-  return operationUnits;
+  return {
+    operationUnits,
+  };
 };
 
 export default getOperationUnits;
