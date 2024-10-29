@@ -80,7 +80,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(
         req,
-      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts${params?.expand}?cacheHash=${urlHash}`,
+      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts,${params?.expand}?cacheHash=${urlHash}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
