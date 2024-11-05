@@ -8,7 +8,6 @@ import split from 'lodash/split';
 import toNumber from 'lodash/toNumber';
 import isInteger from 'lodash/isInteger';
 import dayjs from 'dayjs';
-import {headers} from "next/headers";
 
 export const reqExtractUri = url => {
   const uriPosition = url.indexOf('?');
@@ -21,10 +20,7 @@ export const reqGetHost = req => {
   }
 
   let protocol = 'https://';
-  let host = get(req, 'headers.host', '');
-  if (isEmpty(host)) {
-    host = headers().get('host')
-  }
+  const host = get(req, 'headers.host', '');
 
   if (host.indexOf('localhost') > -1) {
     protocol = 'http://';
