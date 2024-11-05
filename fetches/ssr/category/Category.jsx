@@ -9,6 +9,7 @@ import assign from 'lodash/assign';
 import size from 'lodash/size';
 
 import crypto from 'crypto';
+import get from 'lodash/get';
 
 const handleCategoryData = (category, categoryVirtual) => {
   if (isEmpty(categoryVirtual)) {
@@ -74,7 +75,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(req)}/api/v2/categories/${
         params?.category
-      }?expand=childCategories,promotedProducts`,
+      }?expand=childCategories,promotedProducts,${get(params,"expand","")}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
@@ -88,7 +89,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(
         req,
-      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts?cacheHash=${urlHash}`,
+      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts,${get(params,"expand","")}&cacheHash=${urlHash}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
