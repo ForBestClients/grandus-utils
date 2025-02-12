@@ -1,11 +1,9 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 import {
-  CUTTER_MATTE_ELASTIC_PATH,
   CUTTER_MATTE_PATH,
-  CUTTER_SHINY_ELASTIC_PATH,
+  CUTTER_PREMIUM_PATH,
   CUTTER_SHINY_PATH,
 } from 'utils/cutter';
-import get from 'lodash/get';
 
 export const getCutterShinyPromise = () => {
   const req = {};
@@ -29,37 +27,30 @@ export const getCutterMattePromise = () => {
     .then(r => r.data);
 };
 
-export const getCutterShinyElasticPromise = () => {
+
+export const getCutterPremiumPromise = () => {
   const req = {};
 
-  return fetch(`${reqApiHost(req)}${CUTTER_SHINY_ELASTIC_PATH}`, {
+  return fetch(`${reqApiHost(req)}${CUTTER_PREMIUM_PATH}`, {
     headers: reqGetHeaders(req),
     next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
   })
     .then(result => result.json())
-    .then(r => get(r, 'data[0]'));
+    .then(r => r.data);
 };
 
-export const getCutterMatteElasticPromise = () => {
-  const req = {};
-
-  return fetch(`${reqApiHost(req)}${CUTTER_MATTE_ELASTIC_PATH}`, {
-    headers: reqGetHeaders(req),
-    next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
-  })
-    .then(result => result.json())
-    .then(r => get(r, 'data[0]'));
-};
 
 const getCutterData = async () => {
-  const [productShiny, productMatte] = await Promise.all([
+  const [productShiny, productMatte, productPremium] = await Promise.all([
     getCutterShinyPromise(),
     getCutterMattePromise(),
+    getCutterPremiumPromise()
   ]);
 
   return {
     productShiny,
     productMatte,
+    productPremium,
   };
 };
 
