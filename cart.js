@@ -2,7 +2,7 @@ import { getApiExpand } from './index';
 import get from 'lodash/get';
 
 const isExtendedCart = req => {
-  const referer = get(req, 'headers.referer', '');
+  const referer = req.headers.get('referer');
   const obj = new URL(referer);
 
   switch (obj.pathname) {
