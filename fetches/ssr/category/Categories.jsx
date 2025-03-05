@@ -29,7 +29,7 @@ const getCategoriesData = cacheReact(async props => {
     uri.push('fields=' + props?.fields);
   }
 
-  const categories = await fetch(
+  return await fetch(
     `${reqApiHost(req)}/api/v2/categories${
       isEmpty(uri) ? '' : '?' + join(uri, '&')
     }`,
@@ -38,7 +38,6 @@ const getCategoriesData = cacheReact(async props => {
     },
   ).then(result => result.json());
 
-  return categories;
 });
 
 const getCategories = async props => {

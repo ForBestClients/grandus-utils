@@ -30,9 +30,11 @@ const createUrl = (fetchData, fields = null) => {
 const getPromise = async (params, fields = null) => {
   const req = {};
 
-  const search = params?.props?.params?.search;
-  const category = params?.props?.params?.category;
-  const parameters = params?.props?.params?.parameters;
+  const propParams = await params?.props?.params;
+
+  const search = propParams?.search;
+  const category = propParams?.category;
+  const parameters = propParams?.parameters;
 
   const body = {
     categoryName: category,
