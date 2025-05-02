@@ -28,7 +28,9 @@ const createUrl = (fetchData, fields = null) => {
 };
 
 const getPromise = async (params, fields = null) => {
-  const req = {};
+  const req = {
+    headers: params.headers ?? {}
+  };
 
   const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;
