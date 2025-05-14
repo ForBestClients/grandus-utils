@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { GENERAL_CONSTANT } from '@/grandus-lib/constants/SessionConstants';
-import { unsealData } from 'iron-session';
+import { unsealData } from 'iron-session/edge';
 
 
 const GrandusSession = {
