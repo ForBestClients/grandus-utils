@@ -1,7 +1,8 @@
-import { getApiExpand, getApiFields, reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import { getApiExpand, getApiFields, reqApiHost, reqGetHeaders } from 'grandus-utils';
+import getRequestObject from 'grandus-utils/request';
 
 const getOrder = async token => {
-  const req = {};
+  const req = await getRequestObject();
 
   if (!token) {
     return null;

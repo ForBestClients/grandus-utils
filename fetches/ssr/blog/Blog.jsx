@@ -1,19 +1,21 @@
 import {
-  getPaginationFromHeaders,
   reqApiHost,
   reqGetHeaders,
-} from 'grandus-lib/utils';
+} from 'grandus-utils';
+import { getPaginationFromHeaders } from 'grandus-lib/utils';
+
 
 import isEmpty from 'lodash/isEmpty';
+import getRequestObject from 'grandus-utils/request';
 
 const getBlogData = async props => {
-  const req = {};
+  const req = await getRequestObject();
   let pagination = {};
 
   const uri = [];
 
   if (props?.params?.isLocked !== undefined) {
-    uri.push(`isLocked=${props?.params?.isLocked}`)
+    uri.push(`isLocked=${props?.params?.isLocked}`);
   }
 
   if (props?.perPage) {

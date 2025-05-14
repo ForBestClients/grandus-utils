@@ -10,8 +10,8 @@ import isInteger from 'lodash/isInteger';
 import dayjs from 'dayjs';
 
 export const reqExtractUri = url => {
-  const uriPosition = url.indexOf('?');
-  return uriPosition > 0 ? url.slice(uriPosition) : '';
+  const uriPosition = (url ?? '').indexOf('?');
+  return uriPosition > 0 ? (url ?? '').slice(uriPosition) : '';
 };
 
 export const reqGetHost = req => {

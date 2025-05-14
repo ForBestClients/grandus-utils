@@ -1,4 +1,4 @@
-import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 import { getWebInstanceRawPromise } from 'grandus-utils/fetches/promises/WebInstance';
 
 const getAhojScript = async () => {

@@ -1,4 +1,4 @@
-import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import cache, {
   getCachedDataProps,
@@ -8,11 +8,13 @@ import cache, {
 import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import getRequestObject from 'grandus-utils/request';
 
 export const getStaticBlocksPromise = cacheReact(async props => {
-  const req = {};
-  if(props?.cookies) {
-    req.cookies = props?.cookies
+  const req = await getRequestObject();
+
+  if (props?.cookies) {
+    req.cookies = props?.cookies;
   }
 
   const uri = [];
@@ -36,7 +38,7 @@ export const getStaticBlocksPromise = cacheReact(async props => {
   if (props?.expand !== false) {
     uri.push(
       'expand=' +
-        (props?.expand ? props?.expand : 'url,customCss,customJavascript'),
+      (props?.expand ? props?.expand : 'url,customCss,customJavascript'),
     );
   }
 

@@ -1,4 +1,4 @@
-import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
 
 import { arrayToPath } from 'grandus-lib/utils/filter';
 
@@ -10,6 +10,7 @@ import size from 'lodash/size';
 
 import crypto from 'crypto';
 import get from 'lodash/get';
+import getRequestObject from 'grandus-utils/request';
 
 const handleCategoryData = (category, categoryVirtual) => {
   if (isEmpty(categoryVirtual)) {
@@ -59,7 +60,7 @@ const handleCategoryData = (category, categoryVirtual) => {
 };
 
 const getCategory = cacheReact(async params => {
-  const req = {};
+  const req = await getRequestObject();
   const category = params?.category;
   const externalUrl = `/kategoria/${category}${
     !isEmpty(params?.parameters) ? '/' : ''

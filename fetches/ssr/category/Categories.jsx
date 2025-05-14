@@ -1,4 +1,4 @@
-import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
+import { reqApiHost } from 'grandus-lib/utils/edge';
 
 import cache, {
   getCachedDataProps,
@@ -9,9 +9,12 @@ import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import join from 'lodash/join';
+import getRequestObject from 'grandus-utils/request';
+import { reqGetHeaders } from 'grandus-utils';
 
 const getCategoriesData = cacheReact(async props => {
-  const req = {};
+  const req = await getRequestObject();
+
   let uri = [];
 
   // not implemented on backend
@@ -34,7 +37,7 @@ const getCategoriesData = cacheReact(async props => {
       isEmpty(uri) ? '' : '?' + join(uri, '&')
     }`,
     {
-      headers: reqGetHeadersBasic(req),
+      headers: reqGetHeaders(req),
     },
   ).then(result => result.json());
 
