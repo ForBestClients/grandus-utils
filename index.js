@@ -150,7 +150,5 @@ export const getTheNumberOfDecimals = number => {
 };
 
 export const getFormatDate = (date, dateTemplate) => {
-
-
   return dayjs(date, 'YYYY-MM-DDTHH:mm:ss').format(dateTemplate);
 };

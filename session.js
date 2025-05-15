@@ -2,9 +2,8 @@ import { cookies } from 'next/headers';
 import { GENERAL_CONSTANT } from '@/grandus-lib/constants/SessionConstants';
 import { unsealData } from 'iron-session/edge';
 
-
 const GrandusSession = {
-  getSessionObject: async function() {
+  getSessionObject: async function () {
     const cookieStore = cookies();
     const value = cookieStore.get(GENERAL_CONSTANT)?.value ?? '';
 

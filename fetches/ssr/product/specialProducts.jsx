@@ -15,8 +15,8 @@ const getSpecialProducts = async () => {
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
       },
     )
-      .then((result) => result.json())
-      .then((r) => r.data),
+      .then(result => result.json())
+      .then(r => r.data),
   ]);
 
   return specialProducts;

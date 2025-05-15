@@ -1,14 +1,9 @@
 import { cookies, headers } from 'next/headers';
 import GrandusSession from '@/grandus-utils/session';
 
-const AVAILABLE_HEADER_KEYS = [
-  'grandus-frontend-url',
-  'accept-language',
-];
+const AVAILABLE_HEADER_KEYS = ['grandus-frontend-url', 'accept-language'];
 
-const AVAILABLE_COOKIE_KEYS = [
-  'NEXT_LOCALE',
-];
+const AVAILABLE_COOKIE_KEYS = ['NEXT_LOCALE'];
 
 const getRequestObject = async () => {
   const headerList = await headers();

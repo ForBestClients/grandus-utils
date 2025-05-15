@@ -4,10 +4,7 @@ import {
   getProductCardFields,
   getPaginationFromHeaders,
 } from '/grandus-lib/utils';
-import {
-  reqGetHeaders,
-  reqApiHost,
-} from 'grandus-utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import get from 'lodash/get';
 
@@ -19,7 +16,11 @@ const getProductsData = async data => {
 
   const params = get(data, 'params');
 
-  const orderBy = get(data, 'searchParams.orderBy', process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING);
+  const orderBy = get(
+    data,
+    'searchParams.orderBy',
+    process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING,
+  );
 
   const category = get(data, 'params.category');
   const parameters = get(data, 'params.parameters', []);

@@ -1,9 +1,5 @@
-import {
-  reqApiHost,
-  reqGetHeaders,
-} from 'grandus-utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
 import { getPaginationFromHeaders } from 'grandus-lib/utils';
-
 
 import isEmpty from 'lodash/isEmpty';
 import getRequestObject from 'grandus-utils/request';

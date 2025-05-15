@@ -30,9 +30,10 @@ const handleCategoryData = (category, categoryVirtual) => {
       ? categoryVirtual?.shortDescription
       : '';
 
-    categoryOverride.alternativeDescription = categoryVirtual?.alternativeDescription
-      ? categoryVirtual?.alternativeDescription
-      : '';
+    categoryOverride.alternativeDescription =
+      categoryVirtual?.alternativeDescription
+        ? categoryVirtual?.alternativeDescription
+        : '';
 
     categoryOverride.childCategories = categoryVirtual?.childCategories
       ? categoryVirtual?.childCategories
@@ -76,7 +77,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(req)}/api/v2/categories/${
         params?.category
-      }?expand=childCategories,promotedProducts,${get(params,"expand","")}`,
+      }?expand=childCategories,promotedProducts,${get(params, 'expand', '')}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
@@ -90,7 +91,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(
         req,
-      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts,${get(params,"expand","")}&cacheHash=${urlHash}`,
+      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts,${get(params, 'expand', '')}&cacheHash=${urlHash}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },

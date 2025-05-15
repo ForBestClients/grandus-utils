@@ -53,7 +53,7 @@ const getSubCategories = async props => {
 
     const parameters = isFunction(props?.callback)
       ? props.callback(arrayToParams(props?.parameters ?? {}))
-      : (arrayToParams(props?.parameters ?? {}));
+      : arrayToParams(props?.parameters ?? {});
 
     const url = getFilterUrl(
       props?.category,

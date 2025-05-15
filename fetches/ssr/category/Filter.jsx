@@ -64,7 +64,8 @@ const getPromise = async (params, fields = null) => {
 export const getFilterCategoryDataPromise = async (params, fields = null) => {
   return getPromise(
     params,
-    fields ?? 'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
+    fields ??
+      'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
   );
 };
 

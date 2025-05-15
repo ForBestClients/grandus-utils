@@ -1,6 +1,7 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import { getWebInstanceRawPromise } from 'grandus-utils/fetches/promises/WebInstance';
+
 const getAhojData = async params => {
   const req = {};
   const webinstance = await getWebInstanceRawPromise();

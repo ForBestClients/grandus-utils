@@ -24,8 +24,8 @@ const getBannersData = cacheReact(async params => {
 
   const req = await getRequestObject();
 
-  if(params?.cookies) {
-    req.cookies = params?.cookies
+  if (params?.cookies) {
+    req.cookies = params?.cookies;
   }
 
   let uri = [];
@@ -37,7 +37,7 @@ const getBannersData = cacheReact(async params => {
   if (params?.propertyId) {
     uri.push('propertyId=' + params?.propertyId);
   }
-  if(params?.limit) {
+  if (params?.limit) {
     uri.push('limit=' + params?.limit);
   }
 

@@ -38,7 +38,7 @@ export const getStaticBlocksPromise = cacheReact(async props => {
   if (props?.expand !== false) {
     uri.push(
       'expand=' +
-      (props?.expand ? props?.expand : 'url,customCss,customJavascript'),
+        (props?.expand ? props?.expand : 'url,customCss,customJavascript'),
     );
   }
 
