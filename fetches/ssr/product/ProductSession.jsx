@@ -24,8 +24,6 @@ export const getProductPromise = async (params, user) => {
     headers['Authorization'] = `Bearer ${user.accessToken}`;
   }
 
-  console.log(headers);
-
   return fetch(
     `${reqApiHost(req)}/api/v2/products/${params?.urlTitle}?${uri.join('&')}`,
     {
