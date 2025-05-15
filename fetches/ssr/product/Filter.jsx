@@ -1,21 +1,26 @@
 import crypto from 'crypto';
 
 import {
-  reqGetHeaders,
-  reqApiHost,
   getProductCardFields,
   getPaginationFromHeaders,
 } from '/grandus-lib/utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import get from 'lodash/get';
 
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
+import getRequestObject from 'grandus-utils/request';
 
 const getProductsData = async data => {
-  const req = {};
+  const req = await getRequestObject();
+
   const params = get(data, 'params');
 
-  const orderBy = get(data, 'searchParams.orderBy', process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING);
+  const orderBy = get(
+    data,
+    'searchParams.orderBy',
+    process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING,
+  );
 
   const category = get(data, 'params.category');
   const parameters = get(data, 'params.parameters', []);

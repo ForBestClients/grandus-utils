@@ -1,4 +1,4 @@
-import { reqGetHeaders, reqApiHost } from '/grandus-lib/utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import getProductsData from 'grandus-utils/fetches/ssr/product/Filter';
 import getCarouselData from 'grandus-utils/fetches/ssr/product/Carousel';

@@ -1,4 +1,4 @@
-import { reqGetHeaders, reqApiHost } from '/grandus-lib/utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import map from 'lodash/map';
 

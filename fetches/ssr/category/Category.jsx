@@ -1,4 +1,4 @@
-import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
 
 import { arrayToPath } from 'grandus-lib/utils/filter';
 
@@ -10,6 +10,7 @@ import size from 'lodash/size';
 
 import crypto from 'crypto';
 import get from 'lodash/get';
+import getRequestObject from 'grandus-utils/request';
 
 const handleCategoryData = (category, categoryVirtual) => {
   if (isEmpty(categoryVirtual)) {
@@ -29,9 +30,10 @@ const handleCategoryData = (category, categoryVirtual) => {
       ? categoryVirtual?.shortDescription
       : '';
 
-    categoryOverride.alternativeDescription = categoryVirtual?.alternativeDescription
-      ? categoryVirtual?.alternativeDescription
-      : '';
+    categoryOverride.alternativeDescription =
+      categoryVirtual?.alternativeDescription
+        ? categoryVirtual?.alternativeDescription
+        : '';
 
     categoryOverride.childCategories = categoryVirtual?.childCategories
       ? categoryVirtual?.childCategories
@@ -59,7 +61,7 @@ const handleCategoryData = (category, categoryVirtual) => {
 };
 
 const getCategory = cacheReact(async params => {
-  const req = {};
+  const req = await getRequestObject();
   const category = params?.category;
   const externalUrl = `/kategoria/${category}${
     !isEmpty(params?.parameters) ? '/' : ''
@@ -75,7 +77,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(req)}/api/v2/categories/${
         params?.category
-      }?expand=childCategories,promotedProducts,${get(params,"expand","")}`,
+      }?expand=childCategories,promotedProducts,${get(params, 'expand', '')}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
@@ -89,7 +91,7 @@ const getCategory = cacheReact(async params => {
     fetch(
       `${reqApiHost(
         req,
-      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts,${get(params,"expand","")}&cacheHash=${urlHash}`,
+      )}/api/v2/categories/by-external-url?expand=childCategories,promotedProducts,${get(params, 'expand', '')}&cacheHash=${urlHash}`,
       {
         headers: reqGetHeaders(req),
         next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },

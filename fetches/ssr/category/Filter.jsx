@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
+import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-utils';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
 import cache, {
@@ -9,6 +9,7 @@ import cache, {
 } from 'grandus-lib/utils/cache';
 
 import isEmpty from 'lodash/isEmpty';
+import getRequestObject from 'grandus-utils/request';
 
 const createUrl = (fetchData, fields = null) => {
   const urlHash = crypto
@@ -28,9 +29,7 @@ const createUrl = (fetchData, fields = null) => {
 };
 
 const getPromise = async (params, fields = null) => {
-  const req = {
-    headers: params.headers ?? {}
-  };
+  const req = await getRequestObject();
 
   const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;
@@ -65,7 +64,8 @@ const getPromise = async (params, fields = null) => {
 export const getFilterCategoryDataPromise = async (params, fields = null) => {
   return getPromise(
     params,
-    fields ?? 'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
+    fields ??
+      'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
   );
 };
 

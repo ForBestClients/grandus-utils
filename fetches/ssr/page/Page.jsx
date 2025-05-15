@@ -1,9 +1,10 @@
-import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
 import { isEmpty } from 'lodash';
 import fetcher from 'grandus-utils/fetcher';
+import getRequestObject from 'grandus-utils/request';
 
 const getPage = async slug => {
-  const req = {};
+  const req = await getRequestObject();
 
   if (isEmpty(slug)) {
     return null;

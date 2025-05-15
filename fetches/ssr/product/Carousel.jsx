@@ -1,4 +1,4 @@
-import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
 import isEmpty from 'lodash/isEmpty';
 import { getProcessedCardFields } from 'utils';
 
@@ -8,6 +8,7 @@ import cache, {
 } from 'grandus-lib/utils/cache';
 
 import { cache as cacheReact } from 'react';
+import getRequestObject from 'grandus-utils/request';
 
 const getCarouselData = cacheReact(async params => {
   const cachedData = await getCachedDataProps(
@@ -20,7 +21,7 @@ const getCarouselData = cacheReact(async params => {
     return cachedData;
   }
 
-  const req = {};
+  const req = await getRequestObject();
 
   const uri = [];
 

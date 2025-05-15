@@ -11,5 +11,5 @@ export const getWebInstanceRawPromise = async () => {
     },
   )
     .then(result => result.json())
-    .then(r => r?.webInstance)
-}
+    .then(r => r?.webInstance);
+};

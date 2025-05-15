@@ -1,4 +1,4 @@
-import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import { reqGetHeaders, reqApiHost } from 'grandus-utils';
 
 import cache, {
   getCachedDataProps,
@@ -9,6 +9,7 @@ import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import join from 'lodash/join';
+import getRequestObject from 'grandus-utils/request';
 
 const getBannersData = cacheReact(async params => {
   const cachedData = await getCachedDataProps(
@@ -21,10 +22,10 @@ const getBannersData = cacheReact(async params => {
     return cachedData;
   }
 
-  const req = {};
+  const req = await getRequestObject();
 
-  if(params?.cookies) {
-    req.cookies = params?.cookies
+  if (params?.cookies) {
+    req.cookies = params?.cookies;
   }
 
   let uri = [];
@@ -36,7 +37,7 @@ const getBannersData = cacheReact(async params => {
   if (params?.propertyId) {
     uri.push('propertyId=' + params?.propertyId);
   }
-  if(params?.limit) {
+  if (params?.limit) {
     uri.push('limit=' + params?.limit);
   }
 

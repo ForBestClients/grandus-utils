@@ -1,7 +1,8 @@
-import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
+import getRequestObject from 'grandus-utils/request';
 
 async function getData(params) {
-  const req = {};
+  const req = await getRequestObject();
 
   const [blog] = await Promise.all([
     fetch(

@@ -1,9 +1,10 @@
-import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
-import { getApiExpand, getApiFields } from 'grandus-utils';
+import { reqApiHost } from 'grandus-lib/utils/edge';
+import { getApiExpand, getApiFields, reqGetHeaders } from 'grandus-utils';
 import { getProcessedCardFields } from 'utils';
+import getRequestObject from 'grandus-utils/request';
 
 export const getProductPromise = async params => {
-  const req = {};
+  const req = await getRequestObject();
 
   const uri = [];
   const productDetailFields = getApiFields('PRODUCT_DETAIL').split(',');
@@ -20,7 +21,7 @@ export const getProductPromise = async params => {
   return fetch(
     `${reqApiHost(req)}/api/v2/products/${params?.urlTitle}?${uri.join('&')}`,
     {
-      headers: reqGetHeadersBasic(req),
+      headers: reqGetHeaders(req),
       next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     },
   ).then(result => result.json());
