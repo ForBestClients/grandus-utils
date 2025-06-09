@@ -7,9 +7,9 @@ import cache, {
   saveDataToCacheProps,
 } from 'grandus-lib/utils/cache';
 
-import { cache as cacheReact } from 'react';
+// import { cache as cacheReact } from 'react';
 
-const getCarouselData = cacheReact(async params => {
+const getCarouselData = async params => {
   const cachedData = await getCachedDataProps(
     cache,
     params,
@@ -41,8 +41,8 @@ const getCarouselData = cacheReact(async params => {
   }
 
   const url = `${reqApiHost(req)}/api/v2/carousels${
-    !isEmpty(uri) ? `?${uri.join('&')}` : ''
-  }`;
+    params?.id ? `/${params?.id}` : ''
+  }${!isEmpty(uri) ? `?${uri.join('&')}` : ''}`;
 
   let carousels = [];
 
@@ -74,6 +74,6 @@ const getCarouselData = cacheReact(async params => {
   );
 
   return carousels;
-});
+};
 
 export default getCarouselData;
