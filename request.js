@@ -1,9 +1,11 @@
 import { cookies, headers } from 'next/headers';
 import GrandusSession from '@/grandus-utils/session';
+import { SESSION_USER_PARAMETERS_CONSTANT } from '@/constants/UserConstants';
+import { CURRENCY_COOKIE_NAME_CONSTANT } from '@/grandus-lib/constants/SessionConstants';
 
-const AVAILABLE_HEADER_KEYS = ['grandus-frontend-url', 'accept-language'];
+const AVAILABLE_HEADER_KEYS = ['grandus-frontend-url', 'accept-language', 'x-currency'];
 
-const AVAILABLE_COOKIE_KEYS = ['NEXT_LOCALE'];
+const AVAILABLE_COOKIE_KEYS = ['NEXT_LOCALE', CURRENCY_COOKIE_NAME_CONSTANT];
 
 const getRequestObject = async () => {
   const headerList = await headers();
@@ -25,13 +27,11 @@ const getRequestObject = async () => {
     return acc;
   }, {});
 
-  const req = {
+  return {
     headers: reducedHeaders,
     cookies: reducedCookies,
     session: sessionList,
   };
-
-  return req;
 };
 
 export default getRequestObject;
