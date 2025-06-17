@@ -1,4 +1,4 @@
-import { USER_CONSTANT } from 'grandus-lib/constants/SessionConstants';
+import { CURRENCY_COOKIE_NAME_CONSTANT, USER_CONSTANT } from 'grandus-lib/constants/SessionConstants';
 
 import get from 'lodash/get';
 import toLower from 'lodash/toLower';
@@ -81,6 +81,11 @@ export const reqGetHeaders = req => {
 
   if (locale) {
     result['Accept-Language'] = locale;
+  }
+
+  const currency = get(req, ['cookies', CURRENCY_COOKIE_NAME_CONSTANT]);
+  if (currency) {
+    result['X-Currency'] = currency;
   }
 
   const uriToForward = getFrontendUrlFromHeaders(req?.headers);
