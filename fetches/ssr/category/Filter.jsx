@@ -28,7 +28,9 @@ const createUrl = (fetchData, fields = null) => {
 };
 
 const getPromise = async (params, fields = null) => {
-  const req = {};
+  const req = {
+    headers: params.headers ?? {}
+  };
 
   const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;
@@ -60,10 +62,10 @@ const getPromise = async (params, fields = null) => {
     });
 };
 
-export const getFilterCategoryDataPromise = async params => {
+export const getFilterCategoryDataPromise = async (params, fields = null) => {
   return getPromise(
     params,
-    'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
+    fields ?? 'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
   );
 };
 
