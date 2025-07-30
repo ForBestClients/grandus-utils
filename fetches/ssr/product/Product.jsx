@@ -1,5 +1,4 @@
-import { reqApiHost } from 'grandus-lib/utils/edge';
-import { getApiExpand, getApiFields, reqGetHeaders } from 'grandus-utils';
+import { reqApiHost, getApiExpand, getApiFields, reqGetHeaders } from 'grandus-utils';
 import { getProcessedCardFields } from 'utils';
 import getRequestObject from 'grandus-utils/request';
 

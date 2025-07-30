@@ -1,4 +1,4 @@
-import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
+import { reqApiHost, reqGetHeaders } from 'grandus-utils';
 import getRequestObject from 'grandus-utils/request';
 
 async function getOperationUnits(params) {
