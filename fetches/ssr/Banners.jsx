@@ -41,7 +41,7 @@ const getBannersData = cacheReact(async params => {
   }
 
   if (params?.extend) {
-    uri.push('extend=' + params?.extend);
+    uri.push('expand=' + params?.expand);
   }
 
   const result = await fetch(
