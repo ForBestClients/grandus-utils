@@ -40,7 +40,7 @@ const getBannersData = cacheReact(async params => {
     uri.push('limit=' + params?.limit);
   }
 
-  if (params?.extend) {
+  if (params?.expand) {
     uri.push('expand=' + params?.expand);
   }
 
