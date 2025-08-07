@@ -40,6 +40,10 @@ const getBannersData = cacheReact(async params => {
     uri.push('limit=' + params?.limit);
   }
 
+  if (params?.expand) {
+    uri.push('expand=' + params?.expand);
+  }
+
   const result = await fetch(
     `${reqApiHost(req)}/api/v2/banners${
       isEmpty(uri) ? '' : '?v=2&' + join(uri, '&')
