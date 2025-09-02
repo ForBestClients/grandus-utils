@@ -130,7 +130,7 @@ export const queryToQuery = (
   return newQuery;
 };
 
-/* 
+/*
   options = {
     encode: bool,
     replace: [{key: newKey}, {key2: newKey2}]
@@ -416,7 +416,7 @@ const useFilter = ({
   }
 
   const filterRoute = allProducts ? 'filters/all' : 'filters';
-  const url = `/api/lib/v1/${filterRoute}?${uri.join('&')}`;
+  const url = `/cz/api/lib/v1/${filterRoute}?${uri.join('&')}`;
 
   const {
     data: filter,

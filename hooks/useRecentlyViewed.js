@@ -9,7 +9,7 @@ const useRecentlyViewed = () => {
     mutate,
     isValidating,
   } = useSWR(
-    `/api/lib/v1/recentlyViewed`,
+    `/cz/api/lib/v1/recentlyViewed`,
     url => fetch(url).then(r => r.json()),
     {
       revalidateOnReconnect: false,
@@ -30,7 +30,7 @@ const useRecentlyViewed = () => {
     setIsLoading(true);
     try {
       await mutate(
-        await fetch(`/api/lib/v1/recentlyViewed/items/${productId}`, {
+        await fetch(`/cz/api/lib/v1/recentlyViewed/items/${productId}`, {
           method: 'POST',
         })
           .then(result => result.json())

@@ -16,7 +16,7 @@ const useProducts = (productIds, limit = false) => {
     isValidating,
   } = useSWR(
     productsUrl
-      ? `/api/lib/v1/products?${productsUrl}&fields=parameters,store,ean&perPage=${
+      ? `/cz/api/lib/v1/products?${productsUrl}&fields=parameters,store,ean&perPage=${
         limit ? limit : productIds.length
       }`
       : null,
