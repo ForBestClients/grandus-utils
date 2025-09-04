@@ -9,6 +9,7 @@ import cache, {
 } from 'grandus-lib/utils/cache';
 
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 const createUrl = (fetchData, fields = null) => {
   const urlHash = crypto
@@ -29,12 +30,13 @@ const createUrl = (fetchData, fields = null) => {
 
 const getPromise = async (params, fields = null) => {
   const req = {
-    headers: params.headers ?? {}
+    headers: params.headers ?? {},
   };
 
   const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;
   const parameters = params?.props?.params?.parameters;
+  const marketingCampaign = params?.props?.params?.marketingCampaign;
 
   const body = {
     categoryName: category,
@@ -43,6 +45,15 @@ const getPromise = async (params, fields = null) => {
 
   if (search) {
     body.search = search;
+  }
+
+  if (marketingCampaign) {
+    body.marketingCampaign = marketingCampaign;
+  }
+
+  if (get(body, 'param.marketing-set')) {
+    body.marketingSets = get(body, 'param.marketing-set[0]');
+    delete body.param['marketing-set'];
   }
 
   const fetchData = {
@@ -65,7 +76,8 @@ const getPromise = async (params, fields = null) => {
 export const getFilterCategoryDataPromise = async (params, fields = null) => {
   return getPromise(
     params,
-    fields ?? 'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
+    fields ??
+      'selected,stores,brands,storeLocations,statuses,parameters,selectedCategory',
   );
 };
 

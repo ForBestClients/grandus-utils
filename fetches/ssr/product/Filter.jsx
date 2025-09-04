@@ -15,10 +15,15 @@ const getProductsData = async data => {
   const req = {};
   const params = get(data, 'params');
 
-  const orderBy = get(data, 'searchParams.orderBy', process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING);
+  const orderBy = get(
+    data,
+    'searchParams.orderBy',
+    process.env.NEXT_PUBLIC_PRODUCT_DEFAULT_ORDERING,
+  );
 
   const category = get(data, 'params.category');
   const parameters = get(data, 'params.parameters', []);
+  const marketingCampaign = get(data, 'params.marketingCampaign', null);
 
   const urlHost = reqApiHost(req);
   const urlPage = data?.searchParams?.page ? data?.searchParams?.page : 1;
@@ -32,6 +37,15 @@ const getProductsData = async data => {
     orderBy: orderBy,
     ...getApiBodyFromParams(arrayToParams(parameters)),
   };
+
+  if (marketingCampaign) {
+    body.marketingCampaign = marketingCampaign;
+  }
+
+  if (get(body, 'param.marketing-set')) {
+    body.marketingSets = get(body, 'param.marketing-set[0]');
+    delete body.param['marketing-set'];
+  }
 
   const fetchData = {
     url: `${urlHost}/api/v2/products/filter?fields=${urlFields}&page=${urlPage}&per-page=${urlPerPage}`,

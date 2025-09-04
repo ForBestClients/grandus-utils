@@ -373,6 +373,7 @@ const useFilter = ({
   fields = null,
   allProducts = false,
   enabled = true,
+  marketingCampaign = false,
 } = {}) => {
   const router = useRouter();
   let uri = [];
@@ -408,6 +409,10 @@ const useFilter = ({
 
     if (search) {
       uri.push(`search=${search}`);
+    }
+
+    if (marketingCampaign) {
+      uri.push(`marketingCampaign=${marketingCampaign}`);
     }
 
     if (fields) {
