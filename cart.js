@@ -2,10 +2,13 @@ import { getApiExpand } from './index';
 import get from 'lodash/get';
 
 const isExtendedCart = req => {
-  const referer = get(req, 'headers.referer', '');
-  const obj = new URL(referer);
+  const referer = get(req, 'headers.referer', '')
+  let obj = {};
+  if (referer) {
+    obj = new URL(referer);
+  }
 
-  switch (obj.pathname) {
+  switch (obj?.pathname) {
     case '/kosik':
     case '/kosik/kontakt':
     case '/kosik/doprava-a-platba':
