@@ -7,8 +7,13 @@ export const getProductPromise = async params => {
   const req = await getRequestObject();
 
   const uri = [];
-  const productDetailFields = getApiFields('PRODUCT_DETAIL').split(',');
-  const processedFields = getProcessedCardFields('crosssaleProducts.products.');
+  const productDetailFields = getApiFields('PRODUCT_DETAIL')
+    .split(',')
+    .filter(i => !!i);
+  const processedFields =
+    productDetailFields.length > 0
+      ? getProcessedCardFields('crosssaleProducts.products.')
+      : [];
 
   uri.push(`fields=${[...productDetailFields, ...processedFields].join(',')}`);
 

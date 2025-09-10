@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-utils';
+import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
 import cache, {
@@ -9,7 +9,7 @@ import cache, {
 } from 'grandus-lib/utils/cache';
 
 import isEmpty from 'lodash/isEmpty';
-import getRequestObject from 'grandus-utils/request';
+import get from 'lodash/get';
 
 const createUrl = (fetchData, fields = null) => {
   const urlHash = crypto
@@ -29,11 +29,14 @@ const createUrl = (fetchData, fields = null) => {
 };
 
 const getPromise = async (params, fields = null) => {
-  const req = await getRequestObject();
+  const req = {
+    headers: params.headers ?? {},
+  };
 
   const search = params?.props?.params?.search;
   const category = params?.props?.params?.category;
   const parameters = params?.props?.params?.parameters;
+  const marketingCampaign = params?.props?.params?.marketingCampaign;
 
   const body = {
     categoryName: category,
@@ -42,6 +45,15 @@ const getPromise = async (params, fields = null) => {
 
   if (search) {
     body.search = search;
+  }
+
+  if (marketingCampaign) {
+    body.marketingCampaign = marketingCampaign;
+  }
+
+  if (get(body, 'param.marketing-set')) {
+    body.marketingSets = get(body, 'param.marketing-set[0]');
+    delete body.param['marketing-set'];
   }
 
   const fetchData = {
