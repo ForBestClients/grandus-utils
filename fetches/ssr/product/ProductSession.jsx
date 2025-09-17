@@ -23,13 +23,15 @@ export const getProductPromise = async (params, user) => {
     headers['Authorization'] = `Bearer ${user.accessToken}`;
   }
 
-  return fetch(
-    `${reqApiHost(req)}/api/v2/products/${params?.urlTitle}?${uri.join('&')}`,
-    {
-      headers: headers,
-      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
-    },
-  ).then(result => result.json());
+  const url = `${reqApiHost(req)}/api/v2/products/${params?.urlTitle}?${uri.join('&')}`;
+
+  // IMPORTANT: Do not cache authenticated requests. Otherwise, personalized
+  // responses may be served to other users via Next.js fetch cache/CDN.
+  const fetchOptions = user?.accessToken
+    ? { headers, cache: 'no-store' }
+    : { headers, next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) } };
+
+  return fetch(url, fetchOptions).then(result => result.json());
 };
 
 export const getProductData = async (params, user) => {

@@ -8,7 +8,7 @@ export const getProductPromiseElastic = async params => {
     `${reqApiHost({})}/api/v2/products?urlTitle=${urlTitle}`,
     {
       headers: reqGetHeadersBasic({}),
-      cache: "no-cache",
+      next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     },
   )
     .then(result => result.json())
