@@ -1,9 +1,25 @@
 import { getApiExpand } from './index';
 import get from 'lodash/get';
 
+const getBaseUrl = req => {
+  const proto = get(req, 'headers.x-forwarded-proto', 'http');
+  const host = get(req, 'headers.host', '');
+  const envBase =
+    process.env.NEXT_PUBLIC_DOMAIN_HOST ||
+    process.env.NEXT_PUBLIC_APPLICATION_URL;
+  if (host) return `${proto}://${host}`;
+  if (envBase) return envBase;
+  return 'http://localhost';
+};
+
 const isExtendedCart = req => {
   const referer = get(req, 'headers.referer', '');
-  const obj = new URL(referer);
+  let obj;
+  try {
+    obj = new URL(referer, getBaseUrl(req));
+  } catch {
+    return false;
+  }
 
   switch (obj.pathname) {
     case '/kosik':
