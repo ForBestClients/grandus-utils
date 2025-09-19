@@ -13,6 +13,7 @@ const ImageWrapped = ({
   className,
   quality = 80,
   suffix = "@2x",
+  sizes = '100vw',
   onError
 }) => {
   const src = getImageUrl(photo, `${width}x${height}${suffix ? suffix : ''}`, type);
@@ -31,7 +32,7 @@ const ImageWrapped = ({
       priority={priority}
       className={className}
       quality={quality}
-      sizes="100vw"
+      sizes={sizes}
       onError={onError}
     />
   );
