@@ -1,16 +1,21 @@
 import {withIronSessionApiRoute} from "iron-session/next";
 import {GENERAL_CONSTANT} from "grandus-lib/constants/SessionConstants";
 import {get} from "lodash";
+import { getIronSession } from 'iron-session/edge';
+
+const sessionOptions = {
+  password: process.env.SECRET_COOKIE_PASSWORD,
+  cookieName: GENERAL_CONSTANT,
+  cookieOptions: {
+    secure: process.env.NODE_ENV === 'production'
+  },
+};
 
 export default function withSession(handler) {
-  return withIronSessionApiRoute(handler, {
-    password: process.env.SECRET_COOKIE_PASSWORD,
-    cookieName: GENERAL_CONSTANT,
-    cookieOptions: {
-      secure: process.env.NODE_ENV === 'production'
-    },
-  });
+  return withIronSessionApiRoute(handler, sessionOptions);
 }
+
+export const getSession = async (req, res) => await getIronSession(req, res, sessionOptions);
 
 export const extractSessionUser = (user) => {
   return {
