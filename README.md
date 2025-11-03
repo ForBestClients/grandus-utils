@@ -3,6 +3,7 @@
 ## preklady 
 
 - FE default jazyk a BE musi byt rovnaky
+  - ak nie tak pouzit `NEXT_PUBLIC_DEFAULT_LOCALE` v env
 - aktualny jazyk treba ukladat v cookie `NEXT_LOCALE`
 - nazov cookie treba nastavit pre i18next plugin v subore `app/i18n/settings.js`
 - do BE treba posielat `accept-language` hlavicku

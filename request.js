@@ -25,6 +25,8 @@ const getRequestObject = async () => {
     return acc;
   }, {});
 
+  reducedCookies['NEXT_LOCALE'] = reducedCookies?.NEXT_LOCALE || process?.env?.NEXT_PUBLIC_DEFAULT_LOCALE;
+
   const req = {
     headers: reducedHeaders,
     cookies: reducedCookies,
