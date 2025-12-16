@@ -53,14 +53,13 @@ const handleCategoryData = (category, categoryVirtual) => {
     }
   }
 
-  const result = assign({ isVirtual: false }, category, categoryOverride);
-
-  return result;
+  return assign({ isVirtual: false }, category, categoryOverride);
 };
 
 const getCategory = cacheReact(async params => {
   const req = {};
   const category = params?.category;
+
   const externalUrl = `/kategoria/${category}${
     !isEmpty(params?.parameters) ? '/' : ''
   }${arrayToPath(params?.parameters)}`; //@todo paginacia
@@ -104,11 +103,15 @@ const getCategory = cacheReact(async params => {
       }),
   ]);
 
-  const data = {
+  if (!isEmpty(categoryData?.data) && !isEmpty(categoryVirtualData?.data) && isEmpty(params?.parameters)) {
+    return {
+      category: categoryData?.data
+    };
+  }
+
+  return {
     category: handleCategoryData(categoryData?.data, categoryVirtualData?.data),
   };
-
-  return data;
 });
 
 export default getCategory;
