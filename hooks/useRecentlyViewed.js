@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import useSWR from 'swr';
-import get from 'lodash/get';
 
+/**
+ * Hook for managing recently viewed products
+ * Provides methods to check and add items to recently viewed list
+ *
+ * @returns {Object} Recently viewed state and methods
+ */
 const useRecentlyViewed = () => {
   const [isLoading, setIsLoading] = useState(false);
+
   const {
     data: recentlyViewed,
     mutate,
@@ -18,29 +24,30 @@ const useRecentlyViewed = () => {
     },
   );
 
+  /**
+   * Check if product exists in recently viewed
+   * @param {number|string} productId - Product ID to check
+   * @returns {boolean} True if product is in recently viewed
+   */
   const itemExists = productId => {
-    return (
-      get(recentlyViewed, 'productIds', []).findIndex(
-        element => element == productId,
-      ) >= 0
-    );
+    const productIds = recentlyViewed?.productIds ?? [];
+    return productIds.some(id => id == productId);
   };
 
-  const itemAdd = async (productId, callback) => {
+  /**
+   * Add product to recently viewed
+   * @param {number|string} productId - Product ID to add
+   */
+  const itemAdd = async productId => {
     setIsLoading(true);
     try {
-      await mutate(
-        await fetch(`/api/lib/v1/recentlyViewed/items/${productId}`, {
-          method: 'POST',
-        })
-          .then(result => result.json())
-          .then(result => {
-            return result;
-          }),
-        false,
-      );
+      const result = await fetch(`/api/lib/v1/recentlyViewed/items/${productId}`, {
+        method: 'POST',
+      }).then(res => res.json());
+
+      await mutate(result, false);
     } catch (error) {
-      console.error('An unexpected error happened:', error);
+      console.error('Failed to add to recently viewed:', error);
     }
     setIsLoading(false);
   };

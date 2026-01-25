@@ -1,10 +1,3 @@
-import get from 'lodash/get';
-import split from 'lodash/split';
-import zip from 'lodash/zip';
-import zipObject from 'lodash/zipObject';
-import map from 'lodash/map';
-import isNull from 'lodash/isNull';
-
 import Redis from 'ioredis';
 
 import {
@@ -12,37 +5,42 @@ import {
   USER_WISHLIST_CONSTANT,
 } from 'grandus-lib/constants/SessionConstants';
 
+/**
+ * Initialize Redis client based on environment configuration
+ */
 let client = null;
+
 if (process.env.CACHE_ENABLED) {
   if (process.env.CACHE_USE_CLUSTER) {
-    let clusterConfigExploded = zip(
-      split(process.env.CACHE_PORT, ','),
-      split(process.env.CACHE_HOST, ','),
-    );
-    let clusterConfig = map(clusterConfigExploded, clusterConfigEntry => {
-      return zipObject(['port', 'host'], clusterConfigEntry);
-    });
+    // Build cluster configuration from comma-separated host/port values
+    const ports = (process.env.CACHE_PORT ?? '').split(',');
+    const hosts = (process.env.CACHE_HOST ?? '').split(',');
+
+    const clusterConfig = ports.map((port, index) => ({
+      port,
+      host: hosts[index],
+    }));
+
     client = new Redis.Cluster(clusterConfig);
   } else {
     client = new Redis(
-      process.env.CACHE_PORT ? process.env.CACHE_PORT : undefined,
-      process.env.CACHE_HOST ? process.env.CACHE_HOST : undefined,
+      process.env.CACHE_PORT ?? undefined,
+      process.env.CACHE_HOST ?? undefined,
       { lazyConnect: true },
     );
   }
 }
 
 /**
- * Internal function for getting user AccessToken from session. If user is not logged in, result is unified 0
+ * Extract user access token from session
+ * Returns 0 if user is not logged in (for consistent cache keys)
  *
- * @param {Object} req  - url request object
+ * @param {Object} req - Request object with session
+ * @returns {string|number} Access token or 0
  */
 const extractUserAccessToken = req => {
-  let user = {};
-  if (req && req?.session) {
-    user = get(req.session, USER_CONSTANT);
-  }
-  return get(user, 'accessToken', 0);
+  const user = req?.session?.[USER_CONSTANT] ?? {};
+  return user?.accessToken ?? 0;
 };
 
 /**
@@ -69,12 +67,11 @@ export const getCacheKey = (keyParts = []) => {
 /**
  * Generate unified cache KEY from request
  *
- * @param {object} req
- *
- * @returns {string} User AccessToken or 0
+ * @param {Object} req - Request object
+ * @returns {string} Cache key including URL and user token
  */
 export const getCacheKeyByRequest = req => {
-  return getCacheKey([get(req, 'url', '/'), extractUserAccessToken(req)]);
+  return getCacheKey([req?.url ?? '/', extractUserAccessToken(req)]);
 };
 
 export const getCacheKeyByProps = props => {
@@ -84,8 +81,9 @@ export const getCacheKeyByProps = props => {
 /**
  * Generate unified cache KEY by type
  *
- * @param {options} type enumerated set of predefined options
- * @param {object} options specified options which variate specific options
+ * @param {string} type - Cache type (webinstance, header, footer, custom, request, props, wishlist)
+ * @param {Object} options - Options for cache key generation
+ * @returns {string} Generated cache key
  */
 export const getCacheKeyByType = (type = 'request', options = {}) => {
   switch (type) {
@@ -95,20 +93,21 @@ export const getCacheKeyByType = (type = 'request', options = {}) => {
       return getCacheKey(['system-layout-header']);
     case 'footer':
       return getCacheKey(['system-layout-footer']);
-    case 'custom':
-      const cacheParts = ['custom-key', ...get(options, 'cacheKeyParts', [])];
-      if (get(options, 'cacheKeyUseUser', true)) {
-        cacheParts.push(extractUserAccessToken(get(options, 'req', null)));
+    case 'custom': {
+      const cacheParts = ['custom-key', ...(options?.cacheKeyParts ?? [])];
+      if (options?.cacheKeyUseUser !== false) {
+        cacheParts.push(extractUserAccessToken(options?.req ?? null));
       }
       return getCacheKey(cacheParts);
+    }
     case 'request':
-      return getCacheKeyByRequest(get(options, 'req', null));
+      return getCacheKeyByRequest(options?.req ?? null);
     case 'props':
       return getCacheKeyByProps(options);
     case 'wishlist':
       return getCacheKey([
         USER_WISHLIST_CONSTANT,
-        extractUserAccessToken(get(options, 'req', null)),
+        extractUserAccessToken(options?.req ?? null),
       ]);
     default:
       return getCacheKey([`default-${type}`]);
@@ -132,23 +131,18 @@ export const getCachedDataProps = async (cache, props = {}, cacheId = '') => {
 /**
  * Get data from Redis cache
  *
- * @param {object} req nextjs request object
- * @param {instance} cache sinstance of previosly initiated redis client
- * @param {object} options specified options which variate specific options
+ * @param {Object} req - Next.js request object
+ * @param {Object} cache - Redis client instance
+ * @param {Object} options - Cache options
+ * @returns {Promise<Object|false>} Cached data or false if not found
  */
 export const getCachedData = async (req, cache, options = {}) => {
   if (!cache) return false;
 
-  const cacheKey =
-    get(options, 'cacheKey',
-      getCacheKeyByType(get(options, 'cacheKeyType'), { req: req, ...options }) +
-      getLocalSuffix(req),
-    );
+  const cacheKey = options?.cacheKey ??
+    (getCacheKeyByType(options?.cacheKeyType, { req, ...options }) + getLocalSuffix(req));
 
-  const data = await cache.get(
-    cacheKey,
-    // (err) => console.error(err)
-  );
+  const data = await cache.get(cacheKey);
 
   if (!data) {
     return false;
@@ -158,21 +152,22 @@ export const getCachedData = async (req, cache, options = {}) => {
 };
 
 /**
- * Get data from Redis cache and output it to response.
- * used mainly by API
+ * Get data from Redis cache and output it to response
+ * Used mainly by API routes
  *
- * @param {object} req nextjs request object
- * @param {object} res nextjs response object
- * @param {instance} cache sinstance of previosly initiated redis client
- * @param {object} options specified options which variate specific options
+ * @param {Object} req - Next.js request object
+ * @param {Object} res - Next.js response object
+ * @param {Object} cache - Redis client instance
+ * @param {Object} options - Cache options
+ * @returns {Promise<boolean>} True if cached data was returned, false otherwise
  */
 export const outputCachedData = async (req, res, cache, options = {}) => {
   if (!cache) return false;
 
   const cachedData = await getCachedData(req, cache, options);
-  if (isNull(cachedData) || cachedData == false) return false;
+  if (cachedData === null || cachedData === false) return false;
 
-  if (!isNull(res)) {
+  if (res !== null) {
     res.setHeader('Grandus-Cached-Data', true);
     res.status(200).json(cachedData);
   }
@@ -202,33 +197,33 @@ export const saveDataToCacheProps = async (
 /**
  * Save data to Redis cache
  *
- * @param {object} req nextjs request object
- * @param {instance} cache sinstance of previosly initiated redis client
- * @param {object} data data to be saved in cache
- * @param {object} options specified options which variate specific options
+ * @param {Object} req - Next.js request object
+ * @param {Object} cache - Redis client instance
+ * @param {Object} data - Data to cache
+ * @param {Object} options - Cache options including TTL
+ * @returns {Promise<boolean>} False if cache not available
  */
 export const saveDataToCache = async (req, cache, data, options = {}) => {
   if (!cache) return false;
 
-  let cacheTime = get(options, 'time');
-  if (!cacheTime) {
-    cacheTime = process.env.CACHE_TIME ? process.env.CACHE_TIME : 60;
-  }
+  const cacheTime = options?.time ?? (process.env.CACHE_TIME ?? 60);
 
-  const cacheKey =
-    get(options, 'cacheKey',
-      getCacheKeyByType(get(options, 'cacheKeyType'), { req: req, ...options }) +
-      getLocalSuffix(req),
-    );
+  const cacheKey = options?.cacheKey ??
+    (getCacheKeyByType(options?.cacheKeyType, { req, ...options }) + getLocalSuffix(req));
 
   try {
     cache.set(cacheKey, JSON.stringify(data), 'EX', cacheTime);
   } catch (error) {
-    console.error(error);
+    console.error('Cache save error:', error);
   }
 };
 
+/**
+ * Get locale suffix for cache key
+ * @param {Object} req - Request object with cookies
+ * @returns {string} Locale suffix or empty string
+ */
 const getLocalSuffix = req => {
-  const locale = get(req, 'cookies.NEXT_LOCALE');
+  const locale = req?.cookies?.NEXT_LOCALE;
   return locale ? `.${locale}` : '';
 };

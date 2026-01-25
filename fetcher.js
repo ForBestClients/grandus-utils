@@ -1,17 +1,27 @@
-import get from "lodash/get";
-
+/**
+ * Error handler for fetch responses
+ * @param {Response} res - Fetch response
+ * @throws {Error} With appropriate message based on status
+ */
 const handleError = (res) => {
-  if (res.status === 404) {
-    throw new Error("Not found");
-  }
+  const errorMessages = {
+    404: 'Not found',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    500: 'Server error',
+  };
 
-  if (res.status === 401) {
-    throw new Error("Unauthorized");
-  }
+  throw new Error(errorMessages[res.status] ?? `HTTP error ${res.status}`);
+};
 
-  throw new Error("Other error");
-}
-
+/**
+ * Generic fetcher with error handling
+ * Extracts .data from response automatically
+ *
+ * @param {string} url - URL to fetch
+ * @param {Object} options - Fetch options
+ * @returns {Promise<*>} Response data
+ */
 const fetcher = (url, options) => {
   return fetch(url, options)
     .then((res) => {
@@ -20,7 +30,7 @@ const fetcher = (url, options) => {
       }
       return res.json();
     })
-    .then(res => get(res, 'data'));
-}
+    .then(res => res?.data);
+};
 
 export default fetcher;

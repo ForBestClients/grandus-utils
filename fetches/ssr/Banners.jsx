@@ -7,47 +7,45 @@ import cache, {
 
 import { cache as cacheReact } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
-import join from 'lodash/join';
+const CACHE_ID = '/grandus-utils/fetches/ssr/Banners.jsx';
 
+/**
+ * Check if data is empty (handles arrays and objects)
+ */
+const isDataEmpty = data => {
+  if (!data) return true;
+  if (Array.isArray(data)) return data.length === 0;
+  if (typeof data === 'object') return Object.keys(data).length === 0;
+  return false;
+};
+
+/**
+ * Fetch banners with React + Redis caching
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Array>} Array of banner objects
+ */
 const getBannersData = cacheReact(async params => {
-  const cachedData = await getCachedDataProps(
-    cache,
-    params,
-    '/grandus-utils/fetches/ssr/Banners.jsx',
-  );
+  // Check Redis cache
+  const cachedData = await getCachedDataProps(cache, params, CACHE_ID);
 
-  if (!isEmpty(cachedData)) {
+  if (!isDataEmpty(cachedData)) {
     return cachedData;
   }
 
-  const req = {};
+  // Build request object
+  const req = params?.cookies ? { cookies: params.cookies } : {};
 
-  if(params?.cookies) {
-    req.cookies = params?.cookies
-  }
+  // Build query params
+  const queryParams = [];
+  if (params?.type) queryParams.push(`type=${params.type}`);
+  if (params?.propertyId) queryParams.push(`propertyId=${params.propertyId}`);
+  if (params?.limit) queryParams.push(`limit=${params.limit}`);
+  if (params?.expand) queryParams.push(`expand=${params.expand}`);
 
-  let uri = [];
+  const queryString = queryParams.length > 0 ? `?v=2&${queryParams.join('&')}` : '';
 
-  if (params?.type) {
-    uri.push('type=' + params?.type);
-  }
-
-  if (params?.propertyId) {
-    uri.push('propertyId=' + params?.propertyId);
-  }
-  if(params?.limit) {
-    uri.push('limit=' + params?.limit);
-  }
-
-  if (params?.expand) {
-    uri.push('expand=' + params?.expand);
-  }
-
-  const result = await fetch(
-    `${reqApiHost(req)}/api/v2/banners${
-      isEmpty(uri) ? '' : '?v=2&' + join(uri, '&')
-    }`,
+  const response = await fetch(
+    `${reqApiHost()}/api/v2/banners${queryString}`,
     {
       headers: reqGetHeaders(req),
       next: {
@@ -55,16 +53,13 @@ const getBannersData = cacheReact(async params => {
         tags: ['banner'],
       },
     },
-  )
-    .then(result => result.json())
-    .then(r => r?.data);
-
-  await saveDataToCacheProps(
-    cache,
-    result,
-    params,
-    '/grandus-utils/fetches/ssr/Banners.jsx',
   );
+
+  const data = await response.json();
+  const result = data?.data;
+
+  // Save to cache
+  await saveDataToCacheProps(cache, result, params, CACHE_ID);
 
   return result;
 });

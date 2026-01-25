@@ -1,94 +1,92 @@
-import {
-  get,
-  fromPairs,
-  split,
-  flatMap,
-  isEmpty,
-  chunk,
-  map,
-  find,
-  isArray,
-  isFunction,
-  omit,
-  without,
-  isString,
-  flatten,
-  indexOf,
-  isObject,
-} from 'lodash';
 import useSWR from 'swr';
 import { RESERVED_URI_PARTS } from 'grandus-lib/constants/UrlConstants';
 import { CATEGORY_PARAMETERS_SHOW_LIMIT } from 'grandus-lib/constants/AppConstants';
 import { useRouter } from 'next/navigation';
 
-const sortChunks = chunks => chunks; // temporary disabled sortingsortBy(chunks, (pair) => pair[0]);
+/**
+ * Sort chunks by first element (currently disabled)
+ */
+const sortChunks = chunks => chunks;
 
+/**
+ * Get SEO title data from filter selections
+ * @param {Object} filter - Filter object with selected values
+ * @returns {Array<string>} Array of selected filter names/values
+ */
 export const getSeoTitleData = (filter = {}) => {
   const titleData = [];
+  const selected = filter?.selected ?? {};
 
-  map(get(filter, 'selected.stores.data', []), store => {
-    if (get(store, 'name')) {
-      titleData.push(get(store, 'name'));
-    }
+  // Extract names from stores
+  (selected.stores?.data ?? []).forEach(store => {
+    if (store?.name) titleData.push(store.name);
   });
 
-  map(get(filter, 'selected.brands.data', []), brand => {
-    if (get(brand, 'name')) {
-      titleData.push(get(brand, 'name'));
-    }
+  // Extract names from brands
+  (selected.brands?.data ?? []).forEach(brand => {
+    if (brand?.name) titleData.push(brand.name);
   });
 
-  map(get(filter, 'selected.storeLocations.data', []), store => {
-    if (get(store, 'name')) {
-      titleData.push(get(store, 'name'));
-    }
+  // Extract names from store locations
+  (selected.storeLocations?.data ?? []).forEach(store => {
+    if (store?.name) titleData.push(store.name);
   });
 
-  map(get(filter, 'selected.statuses.data', []), status => {
-    if (get(status, 'name')) {
-      titleData.push(get(status, 'name'));
-    }
+  // Extract names from statuses
+  (selected.statuses?.data ?? []).forEach(status => {
+    if (status?.name) titleData.push(status.name);
   });
 
-  map(get(filter, 'selected.parameters.data', []), parameter => {
-    map(get(parameter, 'values', []), value => {
-      if (get(value, 'value')) {
-        titleData.push(get(value, 'value'));
-      }
+  // Extract parameter values
+  (selected.parameters?.data ?? []).forEach(parameter => {
+    (parameter?.values ?? []).forEach(value => {
+      if (value?.value) titleData.push(value.value);
     });
   });
 
   return titleData;
 };
 
+/**
+ * Check if filter has any active selections (excluding category)
+ * @param {Object} filter - Filter object
+ * @returns {boolean} True if has active filters
+ */
 export const hasActiveFilters = (filter = {}) => {
-  return !isEmpty(omit(get(filter, 'selected', []), 'category'));
+  const selected = filter?.selected ?? {};
+  const keys = Object.keys(selected).filter(key => key !== 'category');
+  return keys.length > 0 && keys.some(key => {
+    const value = selected[key];
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object' && value !== null) return Object.keys(value).length > 0;
+    return !!value;
+  });
 };
 
-export const getApiBodyFromParams = (params = []) => {
-  if (!params) {
-    return {};
-  }
+/**
+ * Convert params object to API body format
+ * @param {Object} params - URL parameters
+ * @returns {Object} API body object
+ */
+export const getApiBodyFromParams = (params = {}) => {
+  if (!params) return {};
 
   const newParams = { ...params };
   const apiBody = {};
 
-  map(RESERVED_URI_PARTS, reserved => {
-    const identifiedReserved = get(
-      newParams,
-      [reserved.urlTitle],
-      get(newParams, [reserved.key]),
-    );
-    if (identifiedReserved) {
-      if (isArray(reserved.key)) {
-        map(reserved.key, (key, index) => {
-          apiBody[key] = get(identifiedReserved, `[${index}]`);
-        });
+  // Process reserved URI parts
+  RESERVED_URI_PARTS.forEach(reserved => {
+    const identifiedReserved = newParams[reserved.urlTitle] ?? newParams[reserved.key];
 
+    if (identifiedReserved) {
+      if (Array.isArray(reserved.key)) {
+        reserved.key.forEach((key, index) => {
+          apiBody[key] = identifiedReserved?.[index];
+        });
         delete newParams[reserved.urlTitle];
       } else {
-        apiBody[reserved.key] = isArray(identifiedReserved)
-          ? map(identifiedReserved, ir => decodeURIComponent(ir))
+        apiBody[reserved.key] = Array.isArray(identifiedReserved)
+          ? identifiedReserved.map(ir => decodeURIComponent(ir))
           : [decodeURIComponent(identifiedReserved)];
         delete newParams[reserved.urlTitle];
         delete newParams[reserved.key];
@@ -96,12 +94,12 @@ export const getApiBodyFromParams = (params = []) => {
     }
   });
 
+  // Process remaining params
   apiBody.param = {};
-
-  map(newParams, (item, key) => {
+  Object.entries(newParams).forEach(([key, item]) => {
     if (item) {
-      apiBody.param[key] = isArray(item)
-        ? map(item, i => decodeURIComponent(i))
+      apiBody.param[key] = Array.isArray(item)
+        ? item.map(i => decodeURIComponent(i))
         : [decodeURIComponent(item)];
     }
   });
@@ -109,33 +107,44 @@ export const getApiBodyFromParams = (params = []) => {
   return apiBody;
 };
 
+/**
+ * Convert path to API body
+ * @param {string} path - URL path
+ * @returns {Object} API body object
+ */
 export const getApiBodyFromPath = path => {
   return getApiBodyFromParams(pathToParams(path));
 };
 
+/**
+ * Transform query object with changes and deletions
+ * @param {Object} query - Original query
+ * @param {Object} dataToChange - Data to merge
+ * @param {Array<string>} toDelete - Keys to delete
+ * @returns {Object} New query object
+ */
 export const queryToQuery = (
   query,
   dataToChange = {},
   toDelete = ['parameters', 'category'],
 ) => {
-  let newQuery = {
-    ...query,
-    ...dataToChange,
-  };
+  const newQuery = { ...query, ...dataToChange };
 
-  if (!isEmpty(toDelete)) {
-    toDelete.map(key => delete newQuery[key]);
+  if (toDelete?.length > 0) {
+    toDelete.forEach(key => delete newQuery[key]);
   }
 
   return newQuery;
 };
 
-/* 
-  options = {
-    encode: bool,
-    replace: [{key: newKey}, {key2: newKey2}]
-  }
-*/
+/**
+ * Convert query object to query string
+ * @param {Object} query - Query object
+ * @param {Object} dataToChange - Data to merge
+ * @param {Array<string>} toDelete - Keys to delete
+ * @param {Object} options - Options for encoding and key replacement
+ * @returns {string} Query string
+ */
 export const queryToQueryString = (
   query,
   dataToChange = {},
@@ -144,65 +153,65 @@ export const queryToQueryString = (
 ) => {
   const queryAdjusted = queryToQuery(
     query,
-    isObject(dataToChange) ? dataToChange : {},
-    isArray(toDelete) ? toDelete : [],
+    typeof dataToChange === 'object' && dataToChange !== null ? dataToChange : {},
+    Array.isArray(toDelete) ? toDelete : [],
   );
 
-  let queryParts = [];
-
-  map(queryAdjusted, (value, key) => {
-    queryParts.push(
-      `${get(options, ['replace', key], key)}=${
-        get(options, 'encode') ? encodeURIComponent(value) : value
-      }`,
-    );
-  });
-
-  return queryParts.join('&');
+  return Object.entries(queryAdjusted)
+    .map(([key, value]) => {
+      const finalKey = options?.replace?.[key] ?? key;
+      const finalValue = options?.encode ? encodeURIComponent(value) : value;
+      return `${finalKey}=${finalValue}`;
+    })
+    .join('&');
 };
 
+/**
+ * Get category link attributes from router
+ * @param {Object} router - Next.js router
+ * @param {Object} options - Link options
+ * @returns {Object} Link attributes
+ */
 export const getCategoryLinkAttributesFromRouter = (router, options = {}) => {
   return getCategoryLinkAttributes(
-    get(router, 'query.category'),
-    arrayToPath(get(router, 'query.parameters', [])),
+    router?.query?.category,
+    arrayToPath(router?.query?.parameters ?? []),
     router.query,
     options,
   );
 };
 
-//tested
+/**
+ * Get category link attributes
+ * @param {string} category - Category slug
+ * @param {string} parameters - Filter parameters path
+ * @param {Object} query - Query object
+ * @param {Object} options - Link options
+ * @returns {Object} Link attributes with href and as
+ */
 export const getCategoryLinkAttributes = (
   category,
   parameters = '',
   query = {},
   options = {},
 ) => {
-  if (get(options, 'absoluteHref')) {
+  if (options?.absoluteHref) {
     return { href: options.absoluteHref };
   }
 
   const emptyResult = {
-    href: {
-      pathname: `/`,
-      query: {},
-    },
-    as: {
-      pathname: `/`,
-      query: {},
-    },
+    href: { pathname: `/`, query: {} },
+    as: { pathname: `/`, query: {} },
   };
 
-  if (!category || !isString(category)) {
+  if (!category || typeof category !== 'string') {
     return emptyResult;
   }
 
-  const newQuery = get(options, 'toDelete')
-    ? queryToQuery(
-        query,
-        get(options, 'dataToChange', {}),
-        get(options, 'toDelete'),
-      )
-    : queryToQuery(query, get(options, 'dataToChange', {}));
+  const newQuery = options?.toDelete
+    ? queryToQuery(query, options?.dataToChange ?? {}, options.toDelete)
+    : queryToQuery(query, options?.dataToChange ?? {});
+
   return {
     href: {
       pathname: `/kategoria/[category]/[[...parameters]]`,
@@ -215,37 +224,43 @@ export const getCategoryLinkAttributes = (
   };
 };
 
+/**
+ * Get campaign link attributes from router
+ */
 export const getCampaignLinkAttributesFromRouter = (router, options = {}) => {
   return getCampaignLinkAttributes(
-    get(router, 'query.campaign'),
-    arrayToPath(get(router, 'query.parameters', [])),
+    router?.query?.campaign,
+    arrayToPath(router?.query?.parameters ?? []),
     router.query,
     options,
   );
 };
 
+/**
+ * Get search link attributes from router
+ */
 export const getSearchLinkAttributesFromRouter = (router, options = {}) => {
   return getSearchLinkAttributes(
-    encodeURIComponent(get(router, 'query.term')),
-    arrayToPath(get(router, 'query.parameters', [])),
+    encodeURIComponent(router?.query?.term ?? ''),
+    arrayToPath(router?.query?.parameters ?? []),
     router.query,
     options,
   );
 };
 
+/**
+ * Get campaign link attributes
+ */
 export const getCampaignLinkAttributes = (
   campaign,
   parameters = '',
   query = {},
   options = {},
 ) => {
-  const newQuery = get(options, 'toDelete')
-    ? queryToQuery(
-        query,
-        get(options, 'dataToChange', {}),
-        get(options, 'toDelete'),
-      )
-    : queryToQuery(query, get(options, 'dataToChange', {}));
+  const newQuery = options?.toDelete
+    ? queryToQuery(query, options?.dataToChange ?? {}, options.toDelete)
+    : queryToQuery(query, options?.dataToChange ?? {});
+
   return {
     href: {
       pathname: `/akcie/[campaign]/[[...parameters]]`,
@@ -258,66 +273,66 @@ export const getCampaignLinkAttributes = (
   };
 };
 
+/**
+ * Get system filter attributes for reserved filter types
+ */
 export const getSystemFilterAttributes = (data, key, options = {}) => {
+  const reservedPart = RESERVED_URI_PARTS.find(r => r.key === key);
+
   return {
     parameter: {
       id: key,
-      name: get(options, 'name')
-        ? get(options, 'name')
-        : get(find(RESERVED_URI_PARTS, ['key', key]), 'title', key),
-      urlTitle: get(find(RESERVED_URI_PARTS, ['key', key]), 'urlTitle', key),
+      name: options?.name ?? reservedPart?.title ?? key,
+      urlTitle: reservedPart?.urlTitle ?? key,
       values: data,
     },
-    handleChange: get(options, 'handleChange'),
-    selected: get(options, 'selected'),
+    handleChange: options?.handleChange,
+    selected: options?.selected,
     options: {
-      styles: get(options, 'styles', {}),
+      styles: options?.styles ?? {},
       ...getShowMoreAttributes(
-        {
-          id: key,
-          values: data,
-        },
-        get(options, 'openedParameter'),
-        get(options, 'onClickToggleOpen'),
+        { id: key, values: data },
+        options?.openedParameter,
+        options?.onClickToggleOpen,
       ),
       ...options,
     },
   };
 };
 
+/**
+ * Get show more attributes for filter parameters
+ */
 export const getShowMoreAttributes = (
   parameter,
   opened,
   onClickToggleOpen,
   options = {},
 ) => {
+  const values = parameter?.values ?? [];
+  const limit = options?.parametersShowLimit ?? CATEGORY_PARAMETERS_SHOW_LIMIT;
+
   return {
-    showMoreEnabled:
-      get(parameter, 'values', []).length >
-      get(options, 'parametersShowLimit', CATEGORY_PARAMETERS_SHOW_LIMIT),
-    showMoreActive: !(indexOf(opened, get(parameter, 'id')) >= 0),
-    showMoreLimit: get(
-      options,
-      'parametersShowLimit',
-      CATEGORY_PARAMETERS_SHOW_LIMIT,
-    ),
+    showMoreEnabled: values.length > limit,
+    showMoreActive: !(opened ?? []).includes(parameter?.id),
+    showMoreLimit: limit,
     showMoreToggle: onClickToggleOpen,
   };
 };
 
+/**
+ * Get search link attributes
+ */
 export const getSearchLinkAttributes = (
   searchTerm,
   parameters = '',
   query = {},
   options = {},
 ) => {
-  const newQuery = get(options, 'toDelete')
-    ? queryToQuery(
-        query,
-        get(options, 'dataToChange', {}),
-        get(options, 'toDelete'),
-      )
-    : queryToQuery(query, get(options, 'dataToChange', {}));
+  const newQuery = options?.toDelete
+    ? queryToQuery(query, options?.dataToChange ?? {}, options.toDelete)
+    : queryToQuery(query, options?.dataToChange ?? {});
+
   return {
     href: {
       pathname: `/vyhladavanie/[term]/[[...parameters]]`,
@@ -330,40 +345,74 @@ export const getSearchLinkAttributes = (
   };
 };
 
+/**
+ * Split array into pairs and convert to params object
+ * @param {Array} array - Array of key/value pairs
+ * @returns {Object} Params object
+ */
 export const arrayToParams = array => {
-  if (isEmpty(array)) {
-    return {};
-  }
-  return fromPairs(
-    sortChunks(
-      chunk(
-        map(array, value =>
-          map(split(value, ','), val => encodeURIComponent(val)),
-        ),
-        2,
-      ),
-    ),
+  if (!array?.length) return {};
+
+  // Map values with encoding, then chunk into pairs
+  const mapped = array.map(value =>
+    value.split(',').map(val => encodeURIComponent(val))
   );
+
+  // Chunk into pairs of 2
+  const chunks = [];
+  for (let i = 0; i < mapped.length; i += 2) {
+    chunks.push(mapped.slice(i, i + 2));
+  }
+
+  // Sort and convert to object
+  const sorted = sortChunks(chunks);
+  return Object.fromEntries(sorted.filter(pair => pair.length === 2));
 };
 
+/**
+ * Convert path to params object
+ * @param {string} path - URL path
+ * @returns {Object} Params object
+ */
 export const pathToParams = path => {
-  if (!path) {
-    return {};
-  }
-  return arrayToParams(split(path, '/'));
+  if (!path) return {};
+  return arrayToParams(path.split('/'));
 };
 
+/**
+ * Convert array to URL path
+ * @param {Array} array - Array of values
+ * @returns {string} URL path
+ */
 export const arrayToPath = array => {
-  if (isEmpty(array)) {
-    return '';
+  if (!array?.length) return '';
+
+  // Chunk into pairs of 2
+  const chunks = [];
+  for (let i = 0; i < array.length; i += 2) {
+    chunks.push(array.slice(i, i + 2));
   }
-  return flatten(sortChunks(chunk(array, 2))).join('/');
+
+  return sortChunks(chunks).flat().join('/');
 };
 
+/**
+ * Convert params object to URL path
+ * @param {Object} params - Params object
+ * @returns {string} URL path
+ */
 export const paramsToPath = params => {
-  return arrayToPath(flatMap(params, (value, key) => [key, value]));
+  const array = Object.entries(params ?? {}).flatMap(([key, value]) => [key, value]);
+  return arrayToPath(array);
 };
 
+/**
+ * Filter hook for managing product filters
+ * Fetches filter data from API based on category, search, and parameters
+ *
+ * @param {Object} config - Hook configuration
+ * @returns {Object} Filter state and methods
+ */
 const useFilter = ({
   category = null,
   search = null,
@@ -376,10 +425,11 @@ const useFilter = ({
   marketingCampaign = false,
 } = {}) => {
   const router = useRouter();
-  let uri = [];
+  const uri = [];
 
   if (useDataFromRouter) {
-    map(get(router, 'query'), (uriPart, index) => {
+    const query = router?.query ?? {};
+    Object.entries(query).forEach(([index, uriPart]) => {
       switch (index) {
         case 'category':
           uri.push(`id=${uriPart}`);
@@ -390,16 +440,13 @@ const useFilter = ({
         case 'parameters':
           uri.push(`param=${arrayToPath(uriPart)}`);
           break;
-
         default:
           uri.push(`${index}=${uriPart}`);
           break;
       }
-
-      return;
     });
   } else {
-    if (!isEmpty(parameters)) {
+    if (parameters?.length > 0) {
       uri.push(`param=${arrayToPath(parameters)}`);
     }
 
@@ -423,16 +470,16 @@ const useFilter = ({
   const filterRoute = allProducts ? 'filters/all' : 'filters';
   const url = `/api/lib/v1/${filterRoute}?${uri.join('&')}`;
 
-  const {
-    data: filter,
-    mutate,
-    isValidating,
-  } = useSWR(enabled ? url : false, url => fetch(url).then(r => r.json()), {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    shouldRetryOnError: true,
-    ...options,
-  });
+  const { data: filter, mutate, isValidating } = useSWR(
+    enabled ? url : null,
+    url => fetch(url).then(r => r.json()),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      shouldRetryOnError: true,
+      ...options,
+    },
+  );
 
   return {
     filter,

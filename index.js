@@ -1,75 +1,95 @@
 import { USER_CONSTANT } from 'grandus-lib/constants/SessionConstants';
-
-import get from 'lodash/get';
-import toLower from 'lodash/toLower';
-import replace from 'lodash/replace';
-import isEmpty from 'lodash/isEmpty';
-import split from 'lodash/split';
-import toNumber from 'lodash/toNumber';
-import isInteger from 'lodash/isInteger';
 import dayjs from 'dayjs';
 
+/**
+ * Extract query string from URL
+ * @param {string} url - Full URL
+ * @returns {string} Query string including '?' or empty string
+ */
 export const reqExtractUri = url => {
   const uriPosition = url.indexOf('?');
   return uriPosition > 0 ? url.slice(uriPosition) : '';
 };
 
+/**
+ * Get host from request or environment
+ * @param {Object} req - Request object
+ * @returns {string} Host URL with protocol
+ */
 export const reqGetHost = req => {
   if (process.env.HOST) {
     return process.env.HOST;
   }
 
-  let protocol = 'https://';
-  const host = get(req, 'headers.host', '');
-  if (host.indexOf('localhost') > -1) {
-    protocol = 'http://';
-  }
+  const host = req?.headers?.host ?? '';
+  const protocol = host.includes('localhost') ? 'http://' : 'https://';
 
   return protocol + host;
 };
 
-export const reqApiHost = req => {
+/**
+ * Get API host from environment
+ * @returns {string} API host URL
+ */
+export const reqApiHost = () => {
   return process.env.HOST_API;
 };
 
-export const getApiExpand = (
-  type = '',
-  asUriPart = false,
-  uriType = 'EXPAND',
-) => {
-  if (!type) {
-    return '';
-  }
+/**
+ * Get API expand/fields configuration
+ * @param {string} type - Configuration type
+ * @param {boolean} asUriPart - Include parameter name prefix
+ * @param {string} uriType - Parameter type (EXPAND or FIELDS)
+ * @returns {string} Configuration value
+ */
+export const getApiExpand = (type = '', asUriPart = false, uriType = 'EXPAND') => {
+  if (!type) return '';
 
-  const expandPrepend = asUriPart
-    ? `${toLower(uriType ? uriType : 'EXPAND')}=`
-    : '';
-  const expandData =
-    process.env[`NEXT_PUBLIC_${type}_${uriType ? uriType : 'EXPAND'}`] ?? null;
+  const paramType = uriType || 'EXPAND';
+  const expandPrepend = asUriPart ? `${paramType.toLowerCase()}=` : '';
+  const expandData = process.env[`NEXT_PUBLIC_${type}_${paramType}`] ?? '';
 
-  return expandPrepend + (expandData ?? '');
+  return expandPrepend + expandData;
 };
 
+/**
+ * Get API fields configuration
+ * @param {string} type - Configuration type
+ * @param {boolean} asUriPart - Include parameter name prefix
+ * @returns {string} Fields configuration value
+ */
 export const getApiFields = (type = '', asUriPart = false) => {
   return getApiExpand(type, asUriPart, 'FIELDS');
 };
 
+/**
+ * Get headers for frontend forwarding
+ * @param {Object} req - Request object
+ * @param {Object} options - Options with forwardUrl
+ * @returns {Object} Headers object
+ */
 export const reqGetHeadersFront = (req, options = {}) => {
   return {
-    ...get(req, 'headers'),
-    host: get(req, 'headers.host'),
-    'grandus-frontend-url': get(options, 'forwardUrl', get(req, 'url')),
+    ...req?.headers,
+    host: req?.headers?.host,
+    'grandus-frontend-url': options?.forwardUrl ?? req?.url,
   };
 };
 
+/**
+ * Extract frontend URL from headers (case-insensitive)
+ * @param {Object} headers - Headers object
+ * @returns {string|undefined} Frontend URL
+ */
 export const getFrontendUrlFromHeaders = headers => {
-  return get(
-    headers,
-    'Grandus-Frontend-Url',
-    get(headers, 'grandus-frontend-url'),
-  );
+  return headers?.['Grandus-Frontend-Url'] ?? headers?.['grandus-frontend-url'];
 };
 
+/**
+ * Build request headers with authentication
+ * @param {Object} req - Request object with session and cookies
+ * @returns {Object} Complete headers object
+ */
 export const reqGetHeaders = req => {
   const result = {
     'Content-Type': 'application/json',
@@ -77,80 +97,76 @@ export const reqGetHeaders = req => {
     'Webinstance-Token': process.env.GRANDUS_TOKEN_WEBINSTANCE,
   };
 
-  const locale = get(req, 'cookies.NEXT_LOCALE');
-
+  // Add locale if present
+  const locale = req?.cookies?.NEXT_LOCALE;
   if (locale) {
     result['Accept-Language'] = locale;
   }
 
+  // Forward URI from headers
   const uriToForward = getFrontendUrlFromHeaders(req?.headers);
   if (uriToForward) {
-    const removedProtocol = replace(
-      replace(uriToForward, 'http://', ''),
-      'https://',
-      '',
-    );
+    const removedProtocol = uriToForward
+      .replace('http://', '')
+      .replace('https://', '');
 
-    Object.assign(result, {
-      URI: replace(removedProtocol, get(req, 'headers.host'), ''),
-    });
+    result.URI = removedProtocol.replace(req?.headers?.host ?? '', '');
   }
 
-  if (!get(req, 'session')) return result;
+  // Return early if no session
+  if (!req?.session) return result;
 
-  const user = get(req.session, USER_CONSTANT);
-
-  if (get(user, 'accessToken')) {
-    Object.assign(result, {
-      Authorization: `Bearer ${get(user, 'accessToken')}`,
-    });
+  // Add authorization if user has access token
+  const user = req.session?.[USER_CONSTANT];
+  if (user?.accessToken) {
+    result.Authorization = `Bearer ${user.accessToken}`;
   }
 
-  if (!process.env.NEXT_PUBLIC_REQUEST_ADDITIONAL_FIELDS) return result;
+  // Process additional fields from environment
+  const additionalFieldsEnv = process.env.NEXT_PUBLIC_REQUEST_ADDITIONAL_FIELDS;
+  if (!additionalFieldsEnv) return result;
 
-  const additionalFields = split(
-    process.env.NEXT_PUBLIC_REQUEST_ADDITIONAL_FIELDS,
-    ',',
-  );
+  const additionalFields = additionalFieldsEnv.split(',');
+  const session = req.session ?? {};
 
-  if (!isEmpty(additionalFields)) {
-    const session = req.session ?? [];
+  for (const field of additionalFields) {
+    const [key, sessionPath] = field.split('|');
+    if (!key) continue;
 
-    additionalFields.map(field => {
-      const fieldExpanded = split(field, '|', 2);
+    // Get value from session using the path (or key if no path specified)
+    const pathToUse = sessionPath ?? key;
+    const value = session?.[pathToUse];
 
-      const key = get(fieldExpanded, '[0]');
-      const value = get(
-        session,
-        get(fieldExpanded, '[1]', get(fieldExpanded, '[0]')),
-      );
-
-      if (value) {
-        const data = {};
-        data[key] = value;
-
-        Object.assign(result, data);
-      }
-    });
+    if (value) {
+      result[key] = value;
+    }
   }
 
   return result;
 };
 
+/**
+ * Get number of decimal places in a number
+ * @param {number|string} number - Number to analyze
+ * @returns {number} Number of decimal places
+ */
 export const getTheNumberOfDecimals = number => {
-  const numberParsed = toNumber(number);
+  const numberParsed = Number(number);
 
-  if (isInteger(numberParsed) || !number) {
+  if (Number.isInteger(numberParsed) || !number) {
     return 0;
   }
 
   const decimalStr = number.toString().split('.')[1] ?? '';
-
   return decimalStr.length;
 };
 
+/**
+ * Format date using dayjs
+ * @param {string} date - Date string
+ * @param {string} dateTemplate - Output format template
+ * @returns {string} Formatted date
+ */
 export const getFormatDate = (date, dateTemplate) => {
-
-
   return dayjs(date, 'YYYY-MM-DDTHH:mm:ss').format(dateTemplate);
 };

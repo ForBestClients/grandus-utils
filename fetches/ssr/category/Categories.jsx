@@ -7,59 +7,64 @@ import cache, {
 
 import { cache as cacheReact } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
-import join from 'lodash/join';
+const CACHE_ID = '/grandus-utils/fetches/ssr/category/Categories.jsx';
 
+/**
+ * Check if data has content
+ */
+const hasData = data => {
+  if (!data) return false;
+  if (Array.isArray(data)) return data.length > 0;
+  if (typeof data === 'object') return Object.keys(data).length > 0;
+  return !!data;
+};
+
+/**
+ * React-cached categories fetcher
+ */
 const getCategoriesData = cacheReact(async props => {
-  const req = {};
-  let uri = [];
+  // Build query params (note: some not implemented on backend)
+  const queryParams = [];
 
-  // not implemented on backend
   if (props?.depth !== false) {
-    uri.push('depth=' + (props?.depth ? props?.depth : '0'));
+    queryParams.push(`depth=${props?.depth ?? '0'}`);
   }
 
-  // not implemented on backend
   if (props?.expand) {
-    uri.push('expand=' + props?.expand);
+    queryParams.push(`expand=${props.expand}`);
   }
 
-  // not implemented on backend
   if (props?.fields) {
-    uri.push('fields=' + props?.fields);
+    queryParams.push(`fields=${props.fields}`);
   }
 
-  const categories = await fetch(
-    `${reqApiHost(req)}/api/v2/categories${
-      isEmpty(uri) ? '' : '?' + join(uri, '&')
-    }`,
+  const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+
+  const response = await fetch(
+    `${reqApiHost()}/api/v2/categories${queryString}`,
     {
-      headers: reqGetHeadersBasic(req),
+      headers: reqGetHeadersBasic({}),
     },
-  ).then(result => result.json());
-
-  return categories;
-});
-
-const getCategories = async props => {
-  const cachedData = await getCachedDataProps(
-    cache,
-    props,
-    '/grandus-utils/fetches/ssr/category/Categories.jsx',
   );
 
-  if (!isEmpty(cachedData)) {
+  return response.json();
+});
+
+/**
+ * Get categories with Redis caching
+ * @param {Object} props - Query parameters
+ * @returns {Promise<Array>} Categories data array
+ */
+const getCategories = async props => {
+  const cachedData = await getCachedDataProps(cache, props, CACHE_ID);
+
+  if (hasData(cachedData)) {
     return cachedData?.data;
   }
 
   const data = await getCategoriesData(props);
 
-  await saveDataToCacheProps(
-    cache,
-    data,
-    props,
-    '/grandus-utils/fetches/ssr/category/Categories.jsx',
-  );
+  await saveDataToCacheProps(cache, data, props, CACHE_ID);
 
   return data?.data;
 };
