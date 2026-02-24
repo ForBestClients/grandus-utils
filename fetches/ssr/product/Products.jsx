@@ -1,4 +1,4 @@
-import { reqApiHost, reqGetHeadersBasic } from '/grandus-lib/utils/edge';
+import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
 import { getProductCardFields,reqGetHeaders } from 'grandus-lib/utils';
 
 const getProducts = async params => {

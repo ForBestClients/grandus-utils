@@ -5,7 +5,7 @@ import {
   reqApiHost,
   getProductCardFields,
   getPaginationFromHeaders,
-} from '/grandus-lib/utils';
+} from 'grandus-lib/utils';
 
 import get from 'lodash/get';
 
