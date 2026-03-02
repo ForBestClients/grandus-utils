@@ -22,8 +22,14 @@ const getBlogData = async props => {
     uri.push(`per-page=${process.env.NEXT_PUBLIC_BLOG_DEFAULT_PER_PAGE}`);
   }
 
-  if (props?.params?.value) {
+  if (props?.searchParams?.search) {
+    uri.push(`search=${props?.searchParams?.search}`);
+  } else if (props?.params?.value) {
     uri.push(`search=${props?.params?.value}`);
+  }
+
+  if (props?.searchParams?.tags) {
+    uri.push(`tags=${props?.searchParams?.tags}`);
   }
 
   if (props?.params?.id) {
