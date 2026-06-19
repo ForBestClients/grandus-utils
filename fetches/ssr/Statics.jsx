@@ -11,8 +11,8 @@ import isEmpty from 'lodash/isEmpty';
 
 export const getStaticsDataPromise = cacheReact(async props => {
   const req = {};
-  if(props?.cookies) {
-    req.cookies = props?.cookies
+  if (props?.cookies) {
+    req.cookies = props?.cookies;
   }
 
   const uri = [];
@@ -29,6 +29,10 @@ export const getStaticsDataPromise = cacheReact(async props => {
     uri.push(`expand=${props?.expand}`);
   } else {
     uri.push(`expand=content,customCss,customJavascript`);
+  }
+
+  if (props?.perPage) {
+    uri.push(`per-page=${props?.perPage}`);
   }
 
   return fetch(
