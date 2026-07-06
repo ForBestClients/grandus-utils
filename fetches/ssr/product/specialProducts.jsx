@@ -1,8 +1,9 @@
-import { reqApiHost, reqGetHeadersBasic } from '/grandus-lib/utils/edge';
+import { reqApiHost } from '/grandus-lib/utils/edge';
 import { getProductCardFields,reqGetHeaders } from 'grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 const getSpecialProducts = async () => {
-  const req = {};
+  const req = await getRequestObject();
 
   const specialProducts = await Promise.all([
     fetch(

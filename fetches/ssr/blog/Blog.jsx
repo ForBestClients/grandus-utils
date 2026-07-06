@@ -3,11 +3,12 @@ import {
   reqApiHost,
   reqGetHeaders,
 } from 'grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 import isEmpty from 'lodash/isEmpty';
 
 const getBlogData = async props => {
-  const req = {};
+  const req = await getRequestObject();
   let pagination = {};
 
   const uri = [];

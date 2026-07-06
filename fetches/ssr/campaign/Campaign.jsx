@@ -2,9 +2,17 @@ import { reqGetHeaders } from 'grandus-lib/utils';
 import get from 'lodash/get';
 import {getApiExpand, reqGetHost} from "@/grandus-utils";
 import {headers} from "next/headers";
+import getRequestObject from 'grandus-utils/request';
 
 const getCampaign = async data => {
-    const req = { headers: { host: headers().get('host') } };
+    const req = await getRequestObject();
+
+    // host is still needed by reqGetHost() to build the frontend url
+    const host = (await headers()).get('host');
+    if (host) {
+        req.headers = { ...req.headers, host };
+    }
+
     const uri = [];
 
     const params = get(data, 'params');

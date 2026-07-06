@@ -1,4 +1,5 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import getRequestObject, { getRequestLocale } from 'grandus-utils/request';
 
 import cache, {
   getCachedDataProps,
@@ -11,9 +12,12 @@ import isEmpty from 'lodash/isEmpty';
 import join from 'lodash/join';
 
 const getBannersData = cacheReact(async params => {
+  const locale = await getRequestLocale();
+  const cacheProps = { ...params, locale };
+
   const cachedData = await getCachedDataProps(
     cache,
-    params,
+    cacheProps,
     '/grandus-utils/fetches/ssr/Banners.jsx',
   );
 
@@ -21,10 +25,10 @@ const getBannersData = cacheReact(async params => {
     return cachedData;
   }
 
-  const req = {};
+  const req = await getRequestObject();
 
   if(params?.cookies) {
-    req.cookies = params?.cookies
+    req.cookies = { ...req.cookies, ...params.cookies };
   }
 
   let uri = [];
@@ -62,7 +66,7 @@ const getBannersData = cacheReact(async params => {
   await saveDataToCacheProps(
     cache,
     result,
-    params,
+    cacheProps,
     '/grandus-utils/fetches/ssr/Banners.jsx',
   );
 

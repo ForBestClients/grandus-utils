@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
 import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
+import getRequestObject, { getRequestLocale } from 'grandus-utils/request';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
 import cache, {
@@ -29,8 +30,10 @@ const createUrl = (fetchData, fields = null) => {
 };
 
 const getPromise = async (params, fields = null) => {
+  const requestObject = await getRequestObject();
   const req = {
-    headers: params.headers ?? {},
+    ...requestObject,
+    headers: { ...requestObject?.headers, ...(params.headers ?? {}) },
   };
 
   const search = params?.props?.params?.search;
@@ -86,9 +89,12 @@ export const getFilterDataPromise = async params => {
 };
 
 export const getFilterData = async params => {
+  const locale = await getRequestLocale();
+  const cacheProps = { ...params, locale };
+
   const cachedData = await getCachedDataProps(
     cache,
-    params,
+    cacheProps,
     '/grandus-utils/fetches/ssr/category/Filter.jsx',
   );
 
@@ -101,7 +107,7 @@ export const getFilterData = async params => {
   await saveDataToCacheProps(
     cache,
     data,
-    params,
+    cacheProps,
     '/grandus-utils/fetches/ssr/category/Filter.jsx',
   );
 

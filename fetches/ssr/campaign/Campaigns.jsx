@@ -1,9 +1,10 @@
 import { reqApiHost, reqGetHeaders, getPaginationFromHeaders } from 'grandus-lib/utils';
 import get from 'lodash/get';
 import {getApiExpand} from "@/grandus-utils";
+import getRequestObject from 'grandus-utils/request';
 
 const getCampaigns = async data => {
-    const req = {};
+    const req = await getRequestObject();
     const uri = [];
 
     const searchParams = get(data, 'searchParams');

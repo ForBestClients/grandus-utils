@@ -1,4 +1,5 @@
 import { reqGetHeaders, reqApiHost } from '/grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 import getProductsData from 'grandus-utils/fetches/ssr/product/Filter';
 import getCarouselData from 'grandus-utils/fetches/ssr/product/Carousel';
@@ -7,7 +8,7 @@ import uniqBy from 'lodash/uniqBy';
 import slice from 'lodash/slice';
 
 const getProductDataStatic = async () => {
-  const req = {};
+  const req = await getRequestObject();
 
   let [categoriesData, carouselsData] = await Promise.all([
     fetch(`${reqApiHost(req)}/api/v2/categories?depth=1`, {

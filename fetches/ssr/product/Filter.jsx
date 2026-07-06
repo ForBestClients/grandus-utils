@@ -6,13 +6,14 @@ import {
   getProductCardFields,
   getPaginationFromHeaders,
 } from '/grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 import get from 'lodash/get';
 
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
 const getProductsData = async data => {
-  const req = {};
+  const req = await getRequestObject();
   const params = get(data, 'params');
 
   const orderBy = get(

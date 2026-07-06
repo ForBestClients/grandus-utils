@@ -1,4 +1,6 @@
-import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
+import { reqApiHost } from 'grandus-lib/utils/edge';
+import { reqGetHeaders } from 'grandus-utils';
+import getRequestObject, { getRequestLocale } from 'grandus-utils/request';
 
 import cache, {
   getCachedDataProps,
@@ -11,7 +13,7 @@ import isEmpty from 'lodash/isEmpty';
 import join from 'lodash/join';
 
 const getCategoriesData = cacheReact(async props => {
-  const req = {};
+  const req = await getRequestObject();
   let uri = [];
 
   // not implemented on backend
@@ -34,7 +36,7 @@ const getCategoriesData = cacheReact(async props => {
       isEmpty(uri) ? '' : '?' + join(uri, '&')
     }`,
     {
-      headers: reqGetHeadersBasic(req),
+      headers: reqGetHeaders(req),
     },
   ).then(result => result.json());
 
@@ -42,9 +44,12 @@ const getCategoriesData = cacheReact(async props => {
 });
 
 const getCategories = async props => {
+  const locale = await getRequestLocale();
+  const cacheProps = { ...props, locale };
+
   const cachedData = await getCachedDataProps(
     cache,
-    props,
+    cacheProps,
     '/grandus-utils/fetches/ssr/category/Categories.jsx',
   );
 
@@ -57,7 +62,7 @@ const getCategories = async props => {
   await saveDataToCacheProps(
     cache,
     data,
-    props,
+    cacheProps,
     '/grandus-utils/fetches/ssr/category/Categories.jsx',
   );
 

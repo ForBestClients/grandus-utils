@@ -1,4 +1,5 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import getRequestObject, { getRequestLocale } from 'grandus-utils/request';
 
 import cache, {
   getCachedDataProps,
@@ -10,9 +11,9 @@ import { cache as cacheReact } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 export const getStaticsDataPromise = cacheReact(async props => {
-  const req = {};
+  const req = await getRequestObject();
   if(props?.cookies) {
-    req.cookies = props?.cookies
+    req.cookies = { ...req.cookies, ...props.cookies };
   }
 
   const uri = [];
@@ -43,8 +44,9 @@ export const getStaticsDataPromise = cacheReact(async props => {
 });
 
 const revalidateCache = async props => {
+  const locale = await getRequestLocale();
   const data = await getStaticsDataPromise(props);
-  saveDataToCacheProps(cache, data, props);
+  saveDataToCacheProps(cache, data, { ...props, locale });
 };
 
 export const getStaticsData = async props => {
@@ -52,9 +54,12 @@ export const getStaticsData = async props => {
     return getStaticsDataPromise(props);
   }
 
+  const locale = await getRequestLocale();
+  const cacheProps = { ...props, locale };
+
   const cachedData = await getCachedDataProps(
     cache,
-    props,
+    cacheProps,
     '/grandus-utils/fetches/ssr/Statics.jsx',
   );
 
@@ -67,7 +72,7 @@ export const getStaticsData = async props => {
   await saveDataToCacheProps(
     cache,
     data,
-    props,
+    cacheProps,
     '/grandus-utils/fetches/ssr/Statics.jsx',
   );
 

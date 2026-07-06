@@ -1,12 +1,13 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 import {
   CUTTER_MATTE_PATH,
   CUTTER_PREMIUM_PATH,
   CUTTER_SHINY_PATH,
 } from 'utils/cutter';
 
-export const getCutterShinyPromise = () => {
-  const req = {};
+export const getCutterShinyPromise = async () => {
+  const req = await getRequestObject();
 
   return fetch(`${reqApiHost(req)}${CUTTER_SHINY_PATH}`, {
     headers: reqGetHeaders(req),
@@ -16,8 +17,8 @@ export const getCutterShinyPromise = () => {
     .then(r => r.data);
 };
 
-export const getCutterMattePromise = () => {
-  const req = {};
+export const getCutterMattePromise = async () => {
+  const req = await getRequestObject();
 
   return fetch(`${reqApiHost(req)}${CUTTER_MATTE_PATH}`, {
     headers: reqGetHeaders(req),
@@ -28,8 +29,8 @@ export const getCutterMattePromise = () => {
 };
 
 
-export const getCutterPremiumPromise = () => {
-  const req = {};
+export const getCutterPremiumPromise = async () => {
+  const req = await getRequestObject();
 
   return fetch(`${reqApiHost(req)}${CUTTER_PREMIUM_PATH}`, {
     headers: reqGetHeaders(req),

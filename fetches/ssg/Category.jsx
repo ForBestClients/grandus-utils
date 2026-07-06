@@ -1,9 +1,10 @@
 import { reqGetHeaders, reqApiHost } from '/grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 import map from 'lodash/map';
 
 const getCategoryDataStatic = async () => {
-  const req = {};
+  const req = await getRequestObject();
 
   let [categoriesData] = await Promise.all([
     fetch(`${reqApiHost(req)}/api/v2/categories?depth=1`, {

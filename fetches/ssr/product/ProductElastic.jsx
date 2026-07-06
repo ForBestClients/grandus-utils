@@ -1,13 +1,16 @@
-import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
+import { reqApiHost } from 'grandus-lib/utils/edge';
+import { reqGetHeaders } from 'grandus-utils';
+import getRequestObject from 'grandus-utils/request';
 import { get } from 'lodash';
 
 export const getProductPromiseElastic = async params => {
+  const req = await getRequestObject();
   const urlTitle = get(params, 'urlTitle', '');
 
   return fetch(
-    `${reqApiHost({})}/api/v2/products?urlTitle=${urlTitle}`,
+    `${reqApiHost(req)}/api/v2/products?urlTitle=${urlTitle}`,
     {
-      headers: reqGetHeadersBasic({}),
+      headers: reqGetHeaders(req),
       next: { revalidate: Number(process.env.NEXT_PUBLIC_REVALIDATE) },
     },
   )

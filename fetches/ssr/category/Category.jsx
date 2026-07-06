@@ -1,4 +1,5 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 import { arrayToPath } from 'grandus-lib/utils/filter';
 
@@ -59,7 +60,7 @@ const handleCategoryData = (category, categoryVirtual) => {
 };
 
 const getCategory = cacheReact(async params => {
-  const req = {};
+  const req = await getRequestObject();
   const category = params?.category;
   const externalUrl = `/kategoria/${category}${
     !isEmpty(params?.parameters) ? '/' : ''

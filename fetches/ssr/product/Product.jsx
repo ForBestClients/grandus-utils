@@ -1,9 +1,10 @@
-import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
-import { getApiExpand, getApiFields } from 'grandus-utils';
+import { reqApiHost } from 'grandus-lib/utils/edge';
+import { getApiExpand, getApiFields, reqGetHeaders } from 'grandus-utils';
+import getRequestObject from 'grandus-utils/request';
 import { getProcessedCardFields } from 'utils';
 
 export const getProductPromise = async (params, options = {}) => {
-  const req = {};
+  const req = await getRequestObject();
 
   const uri = [];
   const productDetailFields = getApiFields('PRODUCT_DETAIL')
@@ -25,7 +26,7 @@ export const getProductPromise = async (params, options = {}) => {
   const revalidate = options?.revalidate;
 
   const reqOptions = {
-    headers: reqGetHeadersBasic(req),
+    headers: reqGetHeaders(req),
   };
 
   if (typeof revalidate === 'number') {

@@ -1,7 +1,8 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 const getHeurekaReviews = async () => {
-  const req = {};
+  const req = await getRequestObject();
 
   return await fetch(`${reqApiHost(req)}/api/v2/review`, {
     headers: reqGetHeaders(req),

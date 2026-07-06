@@ -1,8 +1,9 @@
 import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
 import { getApiExpand } from '@/grandus-utils';
+import getRequestObject from 'grandus-utils/request';
 
 async function getData(params) {
-  const req = {};
+  const req = await getRequestObject();
 
   const uri = [];
 

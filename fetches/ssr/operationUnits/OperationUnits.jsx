@@ -1,7 +1,8 @@
 import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
+import getRequestObject from 'grandus-utils/request';
 
 async function getOperationUnits(params) {
-  const req = {};
+  const req = await getRequestObject();
   const uri = [];
 
   if (params?.expand) {
