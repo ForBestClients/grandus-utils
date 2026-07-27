@@ -28,6 +28,10 @@ const getBlogData = async props => {
     uri.push(`communityCategoryId=${props?.params?.id}`);
   }
 
+  if (props?.params?.tag) {
+    uri.push(`tags=${encodeURIComponent(props?.params?.tag)}`);
+  }
+
   if (props?.searchParams?.page) {
     uri.push(`page=${props?.searchParams?.page}`);
   }
