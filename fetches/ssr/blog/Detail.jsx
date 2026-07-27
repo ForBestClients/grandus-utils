@@ -10,7 +10,7 @@ async function getData(params) {
       // na mapu `{urlName: name}` bez `id`. Bez neho prídu ako plné objekty.
       `${reqApiHost(req)}/api/v2/blogs/${
         params?.urlTitle
-      }?expand=category,text,gallery,products`,
+      }?expand=category,text,gallery,products,additionalInfos`,
       {
         headers: reqGetHeaders(req),
         next: {
