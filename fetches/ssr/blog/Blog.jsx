@@ -32,6 +32,11 @@ const getBlogData = async props => {
     uri.push(`tags=${encodeURIComponent(props?.params?.tag)}`);
   }
 
+  // Autor je additionalInfo typu osoba; API filtruje podľa jeho `hash` aj `id`.
+  if (props?.params?.author) {
+    uri.push(`additionalInfos=${encodeURIComponent(props?.params?.author)}`);
+  }
+
   if (props?.searchParams?.page) {
     uri.push(`page=${props?.searchParams?.page}`);
   }
