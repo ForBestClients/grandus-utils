@@ -9,23 +9,21 @@ import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import join from 'lodash/join';
+import { getRequestContext, getContextLocale } from 'grandus-utils/context';
 
 const getBannersData = cacheReact(async params => {
   const cachedData = await getCachedDataProps(
     cache,
     params,
     '/grandus-utils/fetches/ssr/Banners.jsx',
+    getContextLocale(params),
   );
 
   if (!isEmpty(cachedData)) {
     return cachedData;
   }
 
-  const req = {};
-
-  if(params?.cookies) {
-    req.cookies = params?.cookies
-  }
+  const req = getRequestContext(params);
 
   let uri = [];
 
@@ -64,6 +62,7 @@ const getBannersData = cacheReact(async params => {
     result,
     params,
     '/grandus-utils/fetches/ssr/Banners.jsx',
+    getContextLocale(params),
   );
 
   return result;

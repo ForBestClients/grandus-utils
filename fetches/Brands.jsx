@@ -1,7 +1,8 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getBrands = async props => {
-  const req = {};
+  const req = getRequestContext(props);
 
   const data = await fetch(
     `${reqApiHost(req)}/api/v2/brands?per-page=${

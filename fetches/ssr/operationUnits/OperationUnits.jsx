@@ -1,7 +1,8 @@
 import { reqApiHost, reqGetHeaders } from '/grandus-lib/utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 async function getOperationUnits(params) {
-  const req = {};
+  const req = getRequestContext(params);
   const uri = [];
 
   if (params?.expand) {

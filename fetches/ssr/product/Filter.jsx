@@ -10,9 +10,10 @@ import {
 import get from 'lodash/get';
 
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getProductsData = async data => {
-  const req = {};
+  const req = getRequestContext(data);
   const params = get(data, 'params');
 
   const orderBy = get(

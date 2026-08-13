@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { reqApiHost, reqGetHeaders, reqExtractUri } from 'grandus-lib/utils';
 import { getApiBodyFromParams, arrayToParams } from 'grandus-lib/utils/filter';
 
+import { getRequestContext, getContextLocale } from 'grandus-utils/context';
+
 import cache, {
   getCachedDataProps,
   saveDataToCacheProps,
@@ -29,7 +31,11 @@ const createUrl = (fetchData, fields = null) => {
 };
 
 const getPromise = async (params, fields = null) => {
+  // Request kontext musí byť PRED params.headers – cache kľúč je delený podľa
+  // jazyka (getContextLocale nižšie), takže bez neho by sa do locale-cz
+  // zapísali dáta v jazyku webinštancie a servírovali sa ako české.
   const req = {
+    ...getRequestContext(params),
     headers: params.headers ?? {},
   };
 
@@ -90,6 +96,7 @@ export const getFilterData = async params => {
     cache,
     params,
     '/grandus-utils/fetches/ssr/category/Filter.jsx',
+    getContextLocale(params),
   );
 
   if (!isEmpty(cachedData)) {
@@ -103,6 +110,7 @@ export const getFilterData = async params => {
     data,
     params,
     '/grandus-utils/fetches/ssr/category/Filter.jsx',
+    getContextLocale(params),
   );
 
   return data;

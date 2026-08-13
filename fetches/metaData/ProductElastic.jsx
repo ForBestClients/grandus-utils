@@ -2,6 +2,7 @@ import { getMetaData } from 'grandus-lib/utils/meta';
 import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
 import isEmpty from 'lodash/isEmpty';
 import { get } from 'lodash';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getProductMetadata = async props => {
   const urlTitle = get(props, 'params.urlTitle', '');
@@ -9,7 +10,7 @@ const getProductMetadata = async props => {
   const product = await fetch(
     `${reqApiHost({})}/api/v2/products?urlTitle=${urlTitle}`,
     {
-      headers: reqGetHeadersBasic({})
+      headers: reqGetHeadersBasic(getRequestContext(props))
     },
   )
     .then(result => result.json())

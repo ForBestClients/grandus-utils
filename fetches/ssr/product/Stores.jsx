@@ -1,8 +1,9 @@
 import { get, sortBy } from 'lodash';
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getStores = async params => {
-  let req = {};
+  const req = getRequestContext(params);
   const page = await fetch(
     `${reqApiHost(req)}/api/v2/deliveries/possible-by-items`,
     {

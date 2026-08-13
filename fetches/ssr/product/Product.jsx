@@ -1,9 +1,10 @@
 import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
 import { getApiExpand, getApiFields } from 'grandus-utils';
 import { getProcessedCardFields } from 'utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 export const getProductPromise = async (params, options = {}) => {
-  const req = {};
+  const req = getRequestContext(params);
 
   const uri = [];
   const productDetailFields = getApiFields('PRODUCT_DETAIL')

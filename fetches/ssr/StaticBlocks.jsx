@@ -8,12 +8,10 @@ import cache, {
 import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { getRequestContext, getContextLocale } from 'grandus-utils/context';
 
 export const getStaticBlocksPromise = cacheReact(async props => {
-  const req = {};
-  if(props?.cookies) {
-    req.cookies = props?.cookies
-  }
+  const req = getRequestContext(props);
 
   const uri = [];
 
@@ -56,6 +54,7 @@ const getStaticBlocks = async props => {
     cache,
     props,
     '/grandus-utils/fetches/ssr/StaticBlocks.jsx',
+    getContextLocale(props),
   );
 
   if (!isEmpty(cachedData)) {
@@ -69,6 +68,7 @@ const getStaticBlocks = async props => {
     staticBlocks,
     props,
     '/grandus-utils/fetches/ssr/StaticBlocks.jsx',
+    getContextLocale(props),
   );
 
   return staticBlocks;

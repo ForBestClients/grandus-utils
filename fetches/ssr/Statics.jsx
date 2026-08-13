@@ -8,12 +8,10 @@ import cache, {
 import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { getRequestContext, getContextLocale } from 'grandus-utils/context';
 
 export const getStaticsDataPromise = cacheReact(async props => {
-  const req = {};
-  if(props?.cookies) {
-    req.cookies = props?.cookies
-  }
+  const req = getRequestContext(props);
 
   const uri = [];
 
@@ -44,7 +42,15 @@ export const getStaticsDataPromise = cacheReact(async props => {
 
 const revalidateCache = async props => {
   const data = await getStaticsDataPromise(props);
-  saveDataToCacheProps(cache, data, props);
+  // cacheId musí sedieť s čítaním v getStaticsData – bez neho sa zapisovalo
+  // pod iný kľúč, než sa číta, takže revalidate nikdy nikto neprečítal.
+  saveDataToCacheProps(
+    cache,
+    data,
+    props,
+    '/grandus-utils/fetches/ssr/Statics.jsx',
+    getContextLocale(props),
+  );
 };
 
 export const getStaticsData = async props => {
@@ -56,6 +62,7 @@ export const getStaticsData = async props => {
     cache,
     props,
     '/grandus-utils/fetches/ssr/Statics.jsx',
+    getContextLocale(props),
   );
 
   if (!isEmpty(cachedData)) {
@@ -69,6 +76,7 @@ export const getStaticsData = async props => {
     data,
     props,
     '/grandus-utils/fetches/ssr/Statics.jsx',
+    getContextLocale(props),
   );
 
   return data;

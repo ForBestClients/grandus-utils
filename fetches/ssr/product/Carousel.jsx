@@ -6,6 +6,7 @@ import cache, {
   getCachedDataProps,
   saveDataToCacheProps,
 } from 'grandus-lib/utils/cache';
+import { getRequestContext, getContextLocale } from 'grandus-utils/context';
 
 // import { cache as cacheReact } from 'react';
 
@@ -14,13 +15,14 @@ const getCarouselData = async params => {
     cache,
     params,
     '/grandus-utils/fetches/ssr/product/Carousel.jsx',
+    getContextLocale(params),
   );
 
   if (!isEmpty(cachedData)) {
     return cachedData;
   }
 
-  const req = {};
+  const req = getRequestContext(params);
 
   const uri = [];
 
@@ -71,6 +73,7 @@ const getCarouselData = async params => {
     carousels,
     params,
     '/grandus-utils/fetches/ssr/product/Carousel.jsx',
+    getContextLocale(params),
   );
 
   return carousels;

@@ -5,9 +5,10 @@ import {
 } from 'grandus-lib/utils';
 
 import isEmpty from 'lodash/isEmpty';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getBlogData = async props => {
-  const req = {};
+  const req = getRequestContext(props);
   let pagination = {};
 
   const uri = [];

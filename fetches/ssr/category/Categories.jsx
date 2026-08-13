@@ -9,9 +9,10 @@ import { cache as cacheReact } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import join from 'lodash/join';
+import { getRequestContext, getContextLocale } from 'grandus-utils/context';
 
 const getCategoriesData = cacheReact(async props => {
-  const req = {};
+  const req = getRequestContext(props);
   let uri = [];
 
   // not implemented on backend
@@ -46,6 +47,7 @@ const getCategories = async props => {
     cache,
     props,
     '/grandus-utils/fetches/ssr/category/Categories.jsx',
+    getContextLocale(props),
   );
 
   if (!isEmpty(cachedData)) {
@@ -59,6 +61,7 @@ const getCategories = async props => {
     data,
     props,
     '/grandus-utils/fetches/ssr/category/Categories.jsx',
+    getContextLocale(props),
   );
 
   return data?.data;

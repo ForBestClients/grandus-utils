@@ -10,6 +10,7 @@ import size from 'lodash/size';
 
 import crypto from 'crypto';
 import get from 'lodash/get';
+import { getRequestContext } from 'grandus-utils/context';
 
 const handleCategoryData = (category, categoryVirtual) => {
   if (isEmpty(categoryVirtual)) {
@@ -59,7 +60,7 @@ const handleCategoryData = (category, categoryVirtual) => {
 };
 
 const getCategory = cacheReact(async params => {
-  const req = {};
+  const req = getRequestContext(params);
   const category = params?.category;
   const externalUrl = `/kategoria/${category}${
     !isEmpty(params?.parameters) ? '/' : ''

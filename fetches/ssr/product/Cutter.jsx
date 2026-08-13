@@ -4,9 +4,10 @@ import {
   CUTTER_PREMIUM_PATH,
   CUTTER_SHINY_PATH,
 } from 'utils/cutter';
+import { getRequestContext } from 'grandus-utils/context';
 
 export const getCutterShinyPromise = () => {
-  const req = {};
+  const req = getRequestContext();
 
   return fetch(`${reqApiHost(req)}${CUTTER_SHINY_PATH}`, {
     headers: reqGetHeaders(req),
@@ -17,7 +18,7 @@ export const getCutterShinyPromise = () => {
 };
 
 export const getCutterMattePromise = () => {
-  const req = {};
+  const req = getRequestContext();
 
   return fetch(`${reqApiHost(req)}${CUTTER_MATTE_PATH}`, {
     headers: reqGetHeaders(req),
@@ -29,7 +30,7 @@ export const getCutterMattePromise = () => {
 
 
 export const getCutterPremiumPromise = () => {
-  const req = {};
+  const req = getRequestContext();
 
   return fetch(`${reqApiHost(req)}${CUTTER_PREMIUM_PATH}`, {
     headers: reqGetHeaders(req),

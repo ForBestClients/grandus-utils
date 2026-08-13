@@ -1,8 +1,9 @@
 import { reqApiHost, reqGetHeaders } from 'grandus-lib/utils';
 import isEmpty from "lodash/isEmpty";
+import { getRequestContext } from 'grandus-utils/context';
 
 async function getCategoriesData(props) {
-  const req = {};
+  const req = getRequestContext(props);
 
   const uri = [];
   if (props?.forum !== undefined) {

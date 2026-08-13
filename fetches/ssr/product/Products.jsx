@@ -1,8 +1,9 @@
 import { reqApiHost, reqGetHeadersBasic } from '/grandus-lib/utils/edge';
 import { getProductCardFields,reqGetHeaders } from 'grandus-lib/utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getProducts = async params => {
-  const req = {};
+  const req = getRequestContext(params);
 
   const products = await Promise.all([
     fetch(

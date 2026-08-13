@@ -1,7 +1,8 @@
 import { reqApiHost, reqGetHeadersBasic } from 'grandus-lib/utils/edge';
+import { getRequestContext } from 'grandus-utils/context';
 
-export const getWebInstanceRawPromise = async () => {
-  const req = {};
+export const getWebInstanceRawPromise = async (props = undefined) => {
+  const req = getRequestContext(props);
 
   return fetch(
     `${reqApiHost(req)}/api/web-instance?id=${process.env.GRANDUS_TOKEN_HOST}`,

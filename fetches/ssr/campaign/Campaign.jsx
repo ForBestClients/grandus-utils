@@ -2,9 +2,13 @@ import { reqGetHeaders } from 'grandus-lib/utils';
 import get from 'lodash/get';
 import {getApiExpand, reqGetHost} from "@/grandus-utils";
 import {headers} from "next/headers";
+import { getRequestContext } from 'grandus-utils/context';
 
 const getCampaign = async data => {
-    const req = { headers: { host: headers().get('host') } };
+    const req = {
+        ...getRequestContext(data),
+        headers: { host: headers().get('host') },
+    };
     const uri = [];
 
     const params = get(data, 'params');

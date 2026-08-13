@@ -3,11 +3,12 @@ import {
   reqApiHost,
   getPaginationFromHeaders,
 } from 'grandus-lib/utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 export const revalidate = process.env.NEXT_PUBLIC_REVALIDATE;
 
 const getOperationUnits = async props => {
-  const req = {};
+  const req = getRequestContext(props);
 
   let expand = 'openingHours';
   if(props?.expand){

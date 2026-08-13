@@ -1,3 +1,5 @@
+import { getContextLocale } from 'grandus-utils/context';
+
 import cache, {
   getCachedDataProps,
   saveDataToCacheProps,
@@ -17,6 +19,7 @@ const getWebInstance = async () => {
     cache,
     {},
     '/grandus-utils/fetches/ssr/WebInstance.jsx',
+    getContextLocale(),
   );
 
   if (!isEmpty(cachedData)) {
@@ -30,6 +33,7 @@ const getWebInstance = async () => {
     webinstance,
     {},
     '/grandus-utils/fetches/ssr/WebInstance.jsx',
+    getContextLocale(),
   );
 
   return webinstance;

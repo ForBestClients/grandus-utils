@@ -1,7 +1,8 @@
 import { reqGetHeaders, reqApiHost } from 'grandus-lib/utils';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getCountries = async () => {
-  const req = {};
+  const req = getRequestContext();
 
   const result = await fetch(`${reqApiHost(req)}/api/v2/countries`, {
     headers: reqGetHeaders(req),

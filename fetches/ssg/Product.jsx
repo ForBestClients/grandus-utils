@@ -5,9 +5,10 @@ import getCarouselData from 'grandus-utils/fetches/ssr/product/Carousel';
 import map from 'lodash/map';
 import uniqBy from 'lodash/uniqBy';
 import slice from 'lodash/slice';
+import { getRequestContext } from 'grandus-utils/context';
 
 const getProductDataStatic = async () => {
-  const req = {};
+  const req = getRequestContext();
 
   let [categoriesData, carouselsData] = await Promise.all([
     fetch(`${reqApiHost(req)}/api/v2/categories?depth=1`, {
