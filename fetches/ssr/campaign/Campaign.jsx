@@ -4,7 +4,7 @@ import {getApiExpand, reqGetHost} from "@/grandus-utils";
 import {headers} from "next/headers";
 
 const getCampaign = async data => {
-    const req = { headers: { host: headers().get('host') } };
+    const req = { headers: { host: (await headers()).get('host') } };
     const uri = [];
 
     const params = get(data, 'params');
