@@ -30,6 +30,10 @@ const ImageWrapped = ({
       title={title}
       alt={alt ? alt : ' '}
       priority={priority}
+      // Next 16's `priority` only preloads – it no longer sets fetchpriority,
+      // and async decoding let the LCP image paint frames after it loaded.
+      fetchPriority={priority ? 'high' : undefined}
+      decoding={priority ? 'sync' : undefined}
       className={className}
       quality={quality}
       sizes={sizes}
